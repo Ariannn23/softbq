@@ -29,10 +29,9 @@ function mapSaleToContasisRow(
   client: ContasisSalesClientConfig
 ): ContasisSalesRow {
   const row = createEmptySalesRow();
-  const dueDate = sale.dueDate || sale.issueDate;
 
   row.ffechadoc = sale.issueDate;
-  row.ffechaven = sale.dueDate;
+  row.ffechaven = "";
   row.ccoddoc = sale.documentType;
   row.cserie = sale.series;
   row.cnumero = sale.number;
@@ -50,14 +49,14 @@ function mapSaleToContasisRow(
   row.nicbpers = sale.icbper;
   row.nbase3 = sale.otherTaxes;
   row.ntots = sale.total;
-  row.ntc = sale.exchangeRate;
+  row.ntc = sale.exchangeRate || 1;
   row.freffec = sale.modifiedIssueDate;
   row.crefdoc = sale.modifiedDocumentType;
   row.crefser = sale.modifiedSeries;
   row.crefnum = sale.modifiedNumber;
   row.cmreg = mapCurrency(sale.currency);
-  row.ndolar = sale.currency === "USD" ? sale.total : 0;
-  row.ffechaven2 = dueDate;
+  row.ndolar = sale.currency === "USD" ? sale.exchangeRate : "";
+  row.ffechaven2 = sale.issueDate;
   row.ccond = client.defaultCondition;
   row.ccodcos = "";
   row.ccodcos2 = "";
@@ -65,9 +64,9 @@ function mapSaleToContasisRow(
   row.cctaicbper = "";
   row.cctaotrib = "";
   row.cctatot = "";
-  row.nresp = 0;
-  row.nporre = 0;
-  row.nimpres = 0;
+  row.nresp = "";
+  row.nporre = "";
+  row.nimpres = "";
   row.cserre = "";
   row.cnumre = "";
   row.ffecre = "";
@@ -75,10 +74,10 @@ function mapSaleToContasisRow(
   row.nigv = client.defaultIgvPercent;
   row.cglosa = buildGlosa(sale);
   row.ccodpago = client.defaultPaymentMethod;
-  row.nperdenre = 0;
-  row.nbaseres = 0;
+  row.nperdenre = "";
+  row.nbaseres = "";
   row.cctaperc = "";
-  row.nflgtransgrat = sale.freeOperationsValue > 0 ? 1 : 0;
+  row.nflgtransgrat = "";
 
   return row;
 }

@@ -34,10 +34,9 @@ function mapPurchaseToContasisRow(
   client: ContasisPurchaseClientConfig
 ): ContasisPurchaseRow {
   const row = createEmptyPurchaseRow();
-  const dueDate = purchase.dueDate || purchase.issueDate;
 
   row.ffechadoc = purchase.issueDate;
-  row.ffechaven = purchase.dueDate;
+  row.ffechaven = "";
   row.ccoddoc = purchase.documentType;
   row.ccoddas = purchase.damDsiCode;
   row.cyeardas = purchase.year;
@@ -64,14 +63,14 @@ function mapPurchaseToContasisRow(
   row.cdocnodom = "";
   row.cnumdere = "";
   row.ffecre = "";
-  row.ntc = purchase.exchangeRate;
+  row.ntc = purchase.exchangeRate || 1;
   row.freffec = purchase.modifiedIssueDate;
   row.crefdoc = purchase.modifiedDocumentType;
   row.crefser = purchase.modifiedSeries;
   row.crefnum = purchase.modifiedNumber;
   row.cmreg = mapCurrency(purchase.currency);
-  row.ndolar = purchase.currency === "USD" ? purchase.total : 0;
-  row.ffechaven2 = dueDate;
+  row.ndolar = purchase.currency === "USD" ? purchase.exchangeRate : "";
+  row.ffechaven2 = purchase.issueDate;
   row.ccond = client.defaultCondition;
   row.cctabase = "";
   row.cctaicbper = "";
@@ -79,17 +78,17 @@ function mapPurchaseToContasisRow(
   row.cctatot = "";
   row.ccodcos = "";
   row.ccodcos2 = "";
-  row.nresp = 0;
-  row.nporre = 0;
-  row.nimpres = 0;
+  row.nresp = "";
+  row.nporre = "";
+  row.nimpres = "";
   row.cserre = "";
   row.cnumre = "";
   row.ffecre2 = "";
   row.ccodpresu = "";
   row.nigv = client.defaultIgvPercent;
   row.cglosa = buildGlosa(purchase);
-  row.nperdenre = 0;
-  row.nbaseres = 0;
+  row.nperdenre = "";
+  row.nbaseres = "";
   row.cigvxacre = "";
   row.ccodpago = client.defaultPaymentMethod;
 
