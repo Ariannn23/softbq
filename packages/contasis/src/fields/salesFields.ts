@@ -48,3 +48,14 @@ export const contasisSalesFields = [
   "cctaperc C(20)",
   "nflgtransgrat N(1)"
 ] as const;
+
+export const salesFields = contasisSalesFields;
+
+export type ContasisSalesTechnicalField = (typeof contasisSalesFields)[number];
+
+export type ContasisSalesFieldName =
+  ContasisSalesTechnicalField extends `${infer Name} ${string}` ? Name : never;
+
+export const contasisSalesFieldNames = contasisSalesFields.map((field) =>
+  field.split(" ")[0]
+) as ContasisSalesFieldName[];
