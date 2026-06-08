@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { getSession, login, logout } from "./auth.service.js";
 
-const sessionCookieName = "softbq_session";
+export const sessionCookieName = "softbq_session";
 
 const loginSchema = z.object({
   username: z.string().trim().min(1),
