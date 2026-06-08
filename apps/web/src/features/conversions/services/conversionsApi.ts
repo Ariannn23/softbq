@@ -74,3 +74,33 @@ export async function validateConversions(data: {
 
   return res.json();
 }
+
+export type GenerateConversionPayload = {
+  clientId: string;
+  period: string;
+  salesFile?: { name: string; path: string; size: number };
+  purchasesFile?: { name: string; path: string; size: number };
+};
+
+export type GenerateConversionResponse = {
+  conversionId: number;
+  sales: { fileId: number; fileName: string; recordsCount: number; sizeBytes: number } | null;
+  purchases: { fileId: number; fileName: string; recordsCount: number; sizeBytes: number } | null;
+};
+
+export async function generateConversion(data: GenerateConversionPayload): Promise<GenerateConversionResponse> {
+  const res = await fetch("/api/conversions/generate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null);
+    throw new Error(errorData?.message || "Error al generar la conversión");
+  }
+
+  return res.json();
+}

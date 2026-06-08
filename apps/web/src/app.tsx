@@ -8,6 +8,7 @@ import { DashboardPage } from "./features/dashboard/DashboardPage";
 import { AppLayout } from "./features/layout/AppLayout";
 import { NewConversionPage } from "./features/conversions/pages/NewConversionPage";
 import { ValidationPreviewPage } from "./features/conversions/pages/ValidationPreviewPage";
+import { ConversionResultPage } from "./features/conversions/pages/ConversionResultPage";
 import type { LoginValues, SessionUser } from "./features/shared/types";
 import { fetchSession, login, logout } from "./features/auth/services/authApi";
 
@@ -80,6 +81,7 @@ function AppRoutes() {
         />
         <Route path="/conversiones/nueva" element={<NewConversionPage />} />
         <Route path="/conversiones/preview" element={<ValidationPreviewPage />} />
+        <Route path="/conversiones/resultado/:id" element={<ConversionResultPage />} />
       </Route>
       <Route path="/login" element={<Navigate replace to="/dashboard" />} />
       <Route path="*" element={<Navigate replace to="/dashboard" />} />

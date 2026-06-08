@@ -32,45 +32,51 @@ async function main() {
         const contasisRows = mapPurchasesToContasis({
           client: {
             contasisEntityCode: "01",
-            contasisEntityDescription: "MI ORGANIZACIÓN",
-            defaultCondition: "01",
+            contasisEntityDescription: "MI EMPRESA",
+            defaultCondition: "CON",
             defaultIgvPercent: 18,
-            defaultPaymentMethod: "008"
+            defaultPaymentMethod: "008",
+            defaultGoodsServicesClassification: "0"
           },
           purchases
         });
         
         console.log("Mapped " + contasisRows.length + " purchases to Contasis format.");
         
-        const fileName = "COMPRAS_CONTASIS_REAL_" + path.basename(filePath) + ".xlsx";
+        const ruc = "20612316750"; // Use a dummy RUC for test
+        const period = "202605"; // Use a dummy period
         await writeContasisPurchasesExcel({
-          fileName,
+          ruc,
+          period,
           rows: contasisRows,
           outputDir,
         });
-        console.log("Purchases written to " + fileName + "\\n");
+        console.log("Purchases written to " + outputDir + "\n");
       } else if (fileType === "sales") {
         const sales = normalizeSales(rawTable);
         const contasisRows = mapSalesToContasis({
           client: {
             contasisEntityCode: "01",
-            contasisEntityDescription: "MI ORGANIZACIÓN",
-            defaultCondition: "01",
+            contasisEntityDescription: "MI EMPRESA",
+            defaultCondition: "CON",
             defaultIgvPercent: 18,
-            defaultPaymentMethod: "008"
+            defaultPaymentMethod: "008",
+            defaultGoodsServicesClassification: "0"
           },
           sales
         });
 
         console.log("Mapped " + contasisRows.length + " sales to Contasis format.");
 
-        const fileName = "VENTAS_CONTASIS_REAL_" + path.basename(filePath) + ".xlsx";
+        const ruc = "20612316750"; // Use a dummy RUC for test
+        const period = "202605"; // Use a dummy period
         await writeContasisSalesExcel({
-          fileName,
+          ruc,
+          period,
           rows: contasisRows,
           outputDir,
         });
-        console.log("Sales written to " + fileName + "\n");
+        console.log("Sales written to " + outputDir + "\n");
       } else {
         console.log("Could not detect file type or unsupported format.\n");
       }

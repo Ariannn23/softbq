@@ -1,11 +1,41 @@
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { AlertCircle, CheckCircle2, Info, X } from "lucide-react";
-import type { ValidationResponse, ConversionValidationFileResult } from "../services/conversionsApi";
+import { AlertCircle, CheckCircle2, Info, Loader2, X } from "lucide-react";
+import { generateConversion, type ValidationResponse, type ConversionValidationFileResult } from "../services/conversionsApi";
 
 export function ValidationPreviewPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const validation = location.state?.validation as ValidationResponse | undefined;
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleGenerate = async () => {
+    if (!validation) return;
+    setIsGenerating(true);
+    setError(null);
+    try {
+      const res = await generateConversion({
+        clientId: validation.clientId,
+        period: validation.period,
+        salesFile: validation.sales ? {
+          name: validation.sales.fileName,
+          path: validation.sales.filePath,
+          size: validation.sales.sizeBytes,
+        } : undefined,
+        purchasesFile: validation.purchases ? {
+          name: validation.purchases.fileName,
+          path: validation.purchases.filePath,
+          size: validation.purchases.sizeBytes,
+        } : undefined,
+      });
+      navigate(`/conversiones/resultado/${res.conversionId}`, { state: { result: res } });
+    } catch (err: any) {
+      setError(err.message || "Error al generar la conversión");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   if (!validation) {
     return (
@@ -76,15 +106,17 @@ export function ValidationPreviewPage() {
             Cancelar
           </button>
         </div>
-        <button
-          onClick={() => {
-            // Trigger Excel generation API call here later
-            alert("En el siguiente sprint conectaremos la generación de Excel.");
-          }}
-          className="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
-        >
-          Generar Excel Contasis
-        </button>
+        <div className="flex flex-col items-end gap-2">
+          <button
+            onClick={handleGenerate}
+            disabled={isGenerating}
+            className="flex items-center gap-2 px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isGenerating && <Loader2 className="w-4 h-4 animate-spin" />}
+            {isGenerating ? "Generando..." : "Generar Excel Contasis"}
+          </button>
+          {error && <span className="text-red-500 text-sm font-medium">{error}</span>}
+        </div>
       </div>
     </div>
   );

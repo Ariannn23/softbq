@@ -67,7 +67,6 @@ async function main() {
   const salesOutput = await writeContasisSalesExcel({
     ruc: "20612316750",
     period: "202605",
-    fileName: "VENTAS_CONTASIS_20612316750_202605.xlsx",
     rows: salesRows,
     outputDir,
   });
@@ -138,7 +137,6 @@ async function main() {
   const purchasesOutput = await writeContasisPurchasesExcel({
     ruc: "20612316750",
     period: "202605",
-    fileName: "COMPRAS_CONTASIS_20612316750_202605.xlsx",
     rows: purchaseRows,
     outputDir,
   });

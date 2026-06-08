@@ -143,3 +143,61 @@ export async function validateConversionController(
 
   return reply.send(response);
 }
+
+export async function generateConversionController(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  const { processConversionJob } = await import("../../jobs/conversions.job.js");
+  const data = request.body as any;
+  const user = (request as any).user;
+
+  try {
+    const conversionId = await processConversionJob({
+      clientId: Number(data.clientId),
+      period: data.period,
+      userId: user.id,
+      salesFile: data.salesFile,
+      purchasesFile: data.purchasesFile,
+    });
+
+    return reply.send({ success: true, conversionId });
+  } catch (error: any) {
+    return reply.code(500).send({ message: error.message || "Error al generar conversión" });
+  }
+}
+
+export async function downloadConversionFileController(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  const { id, fileId } = request.params as any;
+  const { db, conversionFiles } = await import("@softbq/db");
+  const { eq, and } = await import("drizzle-orm");
+
+  const [fileRecord] = await db
+    .select()
+    .from(conversionFiles)
+    .where(
+      and(
+        eq(conversionFiles.id, Number(fileId)),
+        eq(conversionFiles.conversionId, Number(id))
+      )
+    )
+    .limit(1);
+
+  if (!fileRecord || !fileRecord.outputPath) {
+    return reply.code(404).send({ message: "Archivo no encontrado" });
+  }
+
+  try {
+    const buffer = await fs.readFile(fileRecord.outputPath);
+    const fileName = path.basename(fileRecord.outputPath);
+
+    reply.header("Content-Disposition", `attachment; filename="${fileName}"`);
+    reply.header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    return reply.send(buffer);
+  } catch (err) {
+    return reply.code(500).send({ message: "Error al leer el archivo físico" });
+  }
+}
