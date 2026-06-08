@@ -1,11 +1,21 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
+import cookie from "@fastify/cookie";
 import multipart from "@fastify/multipart";
+
+import { sqlite } from "@softbq/db";
+
+import { authRoutes } from "./modules/auth/auth.routes.js";
 
 const app = Fastify({ logger: true });
 
-await app.register(cors, { origin: true });
+await app.register(cors, {
+  credentials: true,
+  origin: true
+});
+await app.register(cookie);
 await app.register(multipart);
+await app.register(authRoutes, { prefix: "/api/auth" });
 
 app.get("/api/health", async () => ({
   ok: true,
@@ -20,5 +30,11 @@ app.get("/api/bootstrap", async () => ({
 
 const port = Number(process.env.PORT ?? 3001);
 const host = process.env.HOST ?? "0.0.0.0";
+
+const closeDatabase = async () => {
+  sqlite.close();
+};
+
+app.addHook("onClose", closeDatabase);
 
 await app.listen({ port, host });

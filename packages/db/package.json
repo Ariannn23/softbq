@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "type": "module",
   "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
     "db:push": "drizzle-kit push --config drizzle.config.ts",
     "db:seed": "tsx src/seed.ts",

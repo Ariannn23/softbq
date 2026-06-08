@@ -4,7 +4,7 @@ import type {
   ObservationSeverity,
   SireFileType,
   UserRole
-} from "@softbq/core/index";
+} from "@softbq/core";
 import { relations, sql } from "drizzle-orm";
 import {
   integer,

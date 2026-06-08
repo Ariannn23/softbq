@@ -1,2 +1,2 @@
-export { db, databasePath, sqlite } from "./client";
-export * from "./schema/index";
+export { db, databasePath, sqlite } from "./client.js";
+export * from "./schema/index.js";

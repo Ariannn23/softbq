@@ -1,8 +1,8 @@
 import { hash } from "bcryptjs";
 import { eq } from "drizzle-orm";
 
-import { db, sqlite } from "./client";
-import { settings, users } from "./schema/index";
+import { db, sqlite } from "./client.js";
+import { settings, users } from "./schema/index.js";
 
 const now = () => new Date().toISOString();
 
