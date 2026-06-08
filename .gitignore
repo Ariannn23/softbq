@@ -8,6 +8,7 @@ build/
 storage/uploads/*
 storage/outputs/*
 storage/temp/*
+apps/server/storage/*
 !storage/uploads/.gitkeep
 !storage/outputs/.gitkeep
 !storage/temp/.gitkeep

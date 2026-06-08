@@ -1,14 +1,7 @@
-export type SireFileType = "sales" | "purchases" | "unknown";
+import { normalizeHeader } from "./headers.js";
+import type { SireDetectedFileType } from "./types.js";
 
-function normalizeHeader(header: string) {
-  return header
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .trim()
-    .toLowerCase();
-}
-
-export function detectSireFileType(headers: string[]): SireFileType {
+export function detectSireFileType(headers: string[]): SireDetectedFileType {
   const normalized = headers.map(normalizeHeader);
 
   if (normalized.includes("bi gravada") && normalized.includes("valor facturado exportacion")) {
