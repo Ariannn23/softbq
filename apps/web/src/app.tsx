@@ -51,7 +51,7 @@ const clientSchema = z.object({
 
 type LoginValues = z.infer<typeof loginSchema>;
 type ClientValues = z.infer<typeof clientSchema>;
-type View = "dashboard" | "clients";
+type View = "dashboard" | "clients" | "importClients";
 
 type SessionUser = {
   id: number;
@@ -66,6 +66,42 @@ type Client = ClientValues & {
   updatedAt: string;
 };
 
+type ClientImportField = keyof ClientValues;
+
+type ImportSheet = {
+  name: string;
+  rowCount: number;
+  headers: string[];
+  inferredMapping: Partial<Record<ClientImportField, string>>;
+};
+
+type ImportAnalysis = {
+  importId: string;
+  fileName: string;
+  sheets: ImportSheet[];
+};
+
+type ImportPreview = {
+  rows: ClientValues[];
+  totalRows: number;
+  validRows: number;
+  invalidRows: number;
+  issues: Array<{
+    rowNumber: number;
+    field: ClientImportField;
+    message: string;
+  }>;
+};
+
+type ImportSummary = {
+  created: number;
+  updated: number;
+  omitted: number;
+  errors: number;
+  totalRows: number;
+  importedRows: number;
+};
+
 const emptyClient: ClientValues = {
   ruc: "",
   businessName: "",
@@ -76,6 +112,21 @@ const emptyClient: ClientValues = {
   defaultPaymentMethod: "008",
   defaultIgvPercent: 18
 };
+
+const importFields: Array<{
+  key: ClientImportField;
+  label: string;
+  required?: boolean;
+}> = [
+  { key: "ruc", label: "RUC", required: true },
+  { key: "businessName", label: "Razon social", required: true },
+  { key: "shortName", label: "Nombre corto" },
+  { key: "contasisEntityCode", label: "Codigo entidad Contasis" },
+  { key: "contasisEntityDescription", label: "Descripcion entidad Contasis" },
+  { key: "defaultCondition", label: "Condicion por defecto" },
+  { key: "defaultPaymentMethod", label: "Medio de pago por defecto" },
+  { key: "defaultIgvPercent", label: "IGV por defecto" }
+];
 
 const navItems = [
   { id: "dashboard", label: "Panel Principal", icon: Home },
@@ -330,7 +381,8 @@ function AppShell({
           {navItems.map((item) => {
             const Icon = item.icon;
             const enabled = item.id === "dashboard" || item.id === "clients";
-            const isActive = activeView === item.id;
+            const isActive =
+              activeView === item.id || (item.id === "clients" && activeView === "importClients");
 
             return (
               <button
@@ -394,8 +446,18 @@ function AppShell({
 
         {activeView === "dashboard" ? (
           <DashboardPage clientsVersion={clientsVersion} onNavigateClients={() => onNavigate("clients")} />
+        ) : activeView === "clients" ? (
+          <ClientsPage
+            onClientsChanged={onClientsChanged}
+            onNavigateImport={() => onNavigate("importClients")}
+            user={user}
+          />
         ) : (
-          <ClientsPage onClientsChanged={onClientsChanged} user={user} />
+          <ImportClientsPage
+            onClientsChanged={onClientsChanged}
+            onBack={() => onNavigate("clients")}
+            user={user}
+          />
         )}
       </section>
     </main>
@@ -563,9 +625,11 @@ function DashboardPage({
 
 function ClientsPage({
   onClientsChanged,
+  onNavigateImport,
   user
 }: {
   onClientsChanged: () => void;
+  onNavigateImport: () => void;
   user: SessionUser;
 }) {
   const [clients, setClients] = useState<Client[]>([]);
@@ -574,6 +638,12 @@ function ClientsPage({
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const totalPages = Math.max(Math.ceil(clients.length / pageSize), 1);
+  const pageStart = clients.length === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const pageEnd = Math.min(currentPage * pageSize, clients.length);
+  const paginatedClients = clients.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const clientForm = useForm<ClientValues>({
     resolver: zodResolver(clientSchema),
@@ -593,6 +663,7 @@ function ClientsPage({
     if (response.ok) {
       const data = (await response.json()) as { clients: Client[] };
       setClients(data.clients);
+      setCurrentPage(1);
     }
 
     setLoading(false);
@@ -739,6 +810,8 @@ function ClientsPage({
         <div className="flex gap-4">
           <button
             className="flex h-12 items-center gap-3 rounded-md border border-[#c9dbef] bg-white px-6 font-semibold text-[#007fcb]"
+            disabled={user.role !== "admin"}
+            onClick={onNavigateImport}
             type="button"
           >
             <Upload size={20} />
@@ -800,7 +873,7 @@ function ClientsPage({
               ) : null}
 
               {!loading
-                ? clients.map((client) => (
+                ? paginatedClients.map((client) => (
                     <tr className="border-t border-[#e2edf8]" key={client.id}>
                       <td className="px-5 py-4 font-mono">{client.ruc}</td>
                       <td className="px-5 py-4 font-medium">{client.businessName}</td>
@@ -850,9 +923,28 @@ function ClientsPage({
 
         <div className="flex items-center justify-between border-t border-[#e2edf8] px-5 py-4 text-sm text-[#53698d]">
           <span>
-            Mostrando 1 a {clients.length} de {clients.length} clientes
+            Mostrando {pageStart} a {pageEnd} de {clients.length} clientes
           </span>
           <div className="flex items-center gap-3">
+            <button
+              className="rounded-md border border-[#c9dbef] px-4 py-2 disabled:opacity-50"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((page) => Math.max(page - 1, 1))}
+              type="button"
+            >
+              ‹
+            </button>
+            <span className="rounded-md bg-[#007fcb] px-4 py-2 font-semibold text-white">
+              {currentPage}
+            </span>
+            <button
+              className="rounded-md border border-[#c9dbef] px-4 py-2 disabled:opacity-50"
+              disabled={currentPage >= totalPages}
+              onClick={() => setCurrentPage((page) => Math.min(page + 1, totalPages))}
+              type="button"
+            >
+              ›
+            </button>
             <button className="rounded-md border border-[#c9dbef] px-4 py-2" type="button">10</button>
             <span>por pagina</span>
           </div>
@@ -875,7 +967,14 @@ function ClientsPage({
             <ClientField form={clientForm} label="Descripcion entidad" name="contasisEntityDescription" />
             <ClientField form={clientForm} label="Condicion" name="defaultCondition" />
             <ClientField form={clientForm} label="Medio de pago" name="defaultPaymentMethod" />
-            <ClientField form={clientForm} label="IGV" name="defaultIgvPercent" type="number" />
+            <ClientField
+              form={clientForm}
+              inputMode="decimal"
+              label="IGV"
+              name="defaultIgvPercent"
+              step="0.01"
+              type="number"
+            />
             <div className="flex items-end">
               <button
                 className="h-11 w-full rounded-md bg-[#007fcb] px-5 font-semibold text-white disabled:opacity-70"
@@ -908,19 +1007,484 @@ function ClientsPage({
   );
 }
 
+function ImportClientsPage({
+  onBack,
+  onClientsChanged,
+  user
+}: {
+  onBack: () => void;
+  onClientsChanged: () => void;
+  user: SessionUser;
+}) {
+  const [analysis, setAnalysis] = useState<ImportAnalysis | null>(null);
+  const [selectedSheet, setSelectedSheet] = useState("");
+  const [mapping, setMapping] = useState<Partial<Record<ClientImportField, string>>>({});
+  const [preview, setPreview] = useState<ImportPreview | null>(null);
+  const [summary, setSummary] = useState<ImportSummary | null>(null);
+  const [fileName, setFileName] = useState("");
+  const [fileSize, setFileSize] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const selectedSheetInfo = analysis?.sheets.find((sheet) => sheet.name === selectedSheet);
+  const headers = selectedSheetInfo?.headers ?? [];
+  const currentStep = summary
+    ? 7
+    : preview
+      ? 5
+      : selectedSheetInfo
+        ? 4
+        : analysis
+          ? 2
+          : 1;
+
+  useEffect(() => {
+    if (!analysis || !selectedSheet) {
+      return;
+    }
+
+    const sheet = analysis.sheets.find((item) => item.name === selectedSheet);
+    setPreview(null);
+    setSummary(null);
+    setMapping(sheet?.inferredMapping ?? {});
+  }, [analysis, selectedSheet]);
+
+  useEffect(() => {
+    if (!analysis || !selectedSheet || headers.length === 0) {
+      return;
+    }
+
+    const hasRequiredMapping = importFields
+      .filter((field) => field.required)
+      .every((field) => mapping[field.key]);
+
+    if (!hasRequiredMapping) {
+      setPreview(null);
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      void loadPreview();
+    }, 250);
+
+    return () => window.clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [analysis?.importId, selectedSheet, JSON.stringify(mapping)]);
+
+  async function handleFileChange(file: File | undefined) {
+    if (!file) {
+      return;
+    }
+
+    setBusy(true);
+    setMessage(null);
+    setSummary(null);
+    setPreview(null);
+    setFileName(file.name);
+    setFileSize(`${(file.size / 1024).toFixed(1)} KB`);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("/api/clients/import/analyze", {
+      method: "POST",
+      credentials: "include",
+      body: formData
+    });
+
+    if (!response.ok) {
+      const data = (await response.json()) as { message?: string };
+      setMessage(data.message ?? "No se pudo leer el archivo.");
+      setBusy(false);
+      return;
+    }
+
+    const data = (await response.json()) as { import: ImportAnalysis };
+    setAnalysis(data.import);
+    setSelectedSheet(data.import.sheets[0]?.name ?? "");
+    setBusy(false);
+  }
+
+  async function loadPreview() {
+    if (!analysis || !selectedSheet) {
+      return;
+    }
+
+    setBusy(true);
+    setMessage(null);
+
+    const response = await fetch(`/api/clients/import/${analysis.importId}/preview`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        sheetName: selectedSheet,
+        mapping
+      })
+    });
+
+    if (!response.ok) {
+      const data = (await response.json()) as { message?: string };
+      setMessage(data.message ?? "No se pudo generar la vista previa.");
+      setBusy(false);
+      return;
+    }
+
+    const data = (await response.json()) as { preview: ImportPreview };
+    setPreview(data.preview);
+    setBusy(false);
+  }
+
+  async function confirmImport() {
+    if (!analysis || !selectedSheet) {
+      return;
+    }
+
+    setBusy(true);
+    setMessage(null);
+
+    const response = await fetch(`/api/clients/import/${analysis.importId}/confirm`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        sheetName: selectedSheet,
+        mapping
+      })
+    });
+
+    if (!response.ok) {
+      const data = (await response.json()) as { message?: string };
+      setMessage(data.message ?? "No se pudo confirmar la importacion.");
+      setBusy(false);
+      return;
+    }
+
+    const data = (await response.json()) as { summary: ImportSummary };
+    setSummary(data.summary);
+    onClientsChanged();
+    setBusy(false);
+  }
+
+  if (user.role !== "admin") {
+    return (
+      <div className="mx-auto max-w-[1540px] px-7 py-8">
+        <h1 className="text-3xl font-bold">Importar clientes</h1>
+        <p className="mt-4 rounded-md border border-[#d8e8f6] bg-white p-5 text-[#26466f]">
+          Solo admin puede importar clientes desde Excel.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto max-w-[1540px] px-7 py-7">
+      <div className="text-sm text-[#53698d]">
+        <button className="hover:text-[#007fcb]" onClick={onBack} type="button">
+          Clientes
+        </button>
+        <span className="mx-3">›</span>
+        <span>Importar clientes</span>
+      </div>
+      <h1 className="mt-3 text-3xl font-bold">Importar clientes</h1>
+      <p className="mt-2 text-[#26466f]">
+        Carga la base inicial de clientes desde un archivo Excel.
+      </p>
+
+      <ImportSteps currentStep={currentStep} />
+
+      <div className="mt-6 grid gap-3 xl:grid-cols-[330px_minmax(0,1fr)_minmax(0,1fr)]">
+        <section className="row-span-2 rounded-lg border border-[#d8e8f6] bg-white p-5 shadow-sm">
+          <h2 className="text-lg font-bold text-[#006eb3]">1. Subir archivo Excel</h2>
+          <label className="mt-5 flex min-h-52 cursor-pointer flex-col items-center justify-center rounded-md border border-dashed border-[#b9d9f9] bg-[#fbfdff] p-6 text-center">
+            <FileSpreadsheet className="h-12 w-12 text-emerald-600" />
+            <span className="mt-4 font-semibold text-[#26466f]">
+              Arrastra y suelta tu archivo aqui
+            </span>
+            <span className="mt-2 text-sm text-[#53698d]">o</span>
+            <span className="mt-4 rounded-md bg-[#007fcb] px-5 py-3 font-semibold text-white">
+              Seleccionar archivo
+            </span>
+            <input
+              accept=".xlsx"
+              className="hidden"
+              onChange={(event) => void handleFileChange(event.target.files?.[0])}
+              type="file"
+            />
+          </label>
+
+          {fileName ? (
+            <div className="mt-4 flex items-center justify-between rounded-md border border-[#d8e8f6] p-3">
+              <div className="flex items-center gap-3">
+                <FileSpreadsheet className="h-7 w-7 text-emerald-600" />
+                <div>
+                  <p className="text-sm font-semibold">{fileName}</p>
+                  <p className="text-xs text-[#53698d]">{fileSize}</p>
+                </div>
+              </div>
+              <CheckCircle className="h-5 w-5 text-emerald-600" />
+            </div>
+          ) : null}
+
+          <p className="mt-5 text-sm leading-6 text-[#53698d]">
+            Formato permitido: .xlsx
+            <br />
+            Tamano maximo: 10 MB
+          </p>
+        </section>
+
+        <section className="rounded-lg border border-[#d8e8f6] bg-white p-5 shadow-sm">
+          <h2 className="text-lg font-bold text-[#006eb3]">2. Seleccionar hoja</h2>
+          <p className="mt-4 text-sm text-[#53698d]">Hojas detectadas en el archivo:</p>
+          <select
+            className="mt-4 h-11 w-full rounded-md border border-[#c9dbef] px-3 outline-none"
+            disabled={!analysis}
+            onChange={(event) => setSelectedSheet(event.target.value)}
+            value={selectedSheet}
+          >
+            {analysis?.sheets.map((sheet) => (
+              <option key={sheet.name} value={sheet.name}>
+                {sheet.name}
+              </option>
+            ))}
+          </select>
+          {selectedSheetInfo ? (
+            <p className="mt-4 flex items-center gap-2 text-sm text-emerald-700">
+              <CheckCircle size={16} />
+              {selectedSheetInfo.rowCount} filas encontradas en la hoja seleccionada.
+            </p>
+          ) : null}
+        </section>
+
+        <section className="rounded-lg border border-[#d8e8f6] bg-white p-5 shadow-sm">
+          <h2 className="text-lg font-bold text-[#006eb3]">3. Columnas detectadas</h2>
+          <p className="mt-4 text-sm text-[#53698d]">
+            Se detectaron {headers.length} columnas en la hoja seleccionada.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {headers.slice(0, 8).map((header, index) => (
+              <span className="rounded border border-[#c9dbef] px-3 py-2 text-xs" key={header}>
+                {String.fromCharCode(65 + index)} {header}
+              </span>
+            ))}
+            {headers.length > 8 ? (
+              <span className="rounded border border-[#c9dbef] px-3 py-2 text-xs">
+                + {headers.length - 8} mas
+              </span>
+            ) : null}
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-[#d8e8f6] bg-white p-5 shadow-sm">
+          <h2 className="text-lg font-bold text-[#006eb3]">
+            4. Mapear columnas a campos de SOFTBQ
+          </h2>
+          <div className="mt-5 space-y-3">
+            {importFields.map((field) => (
+              <div className="grid grid-cols-[1fr_24px_1fr] items-center gap-3 text-sm" key={field.key}>
+                <span className="font-semibold">
+                  {field.label}
+                  {field.required ? <span className="text-red-600"> *</span> : null}
+                </span>
+                <span className="text-center text-[#53698d]">→</span>
+                <select
+                  className="h-9 rounded-md border border-[#c9dbef] px-2 outline-none"
+                  onChange={(event) =>
+                    setMapping((current) => ({
+                      ...current,
+                      [field.key]: event.target.value
+                    }))
+                  }
+                  value={mapping[field.key] ?? ""}
+                >
+                  <option value="">No mapear</option>
+                  {headers.map((header) => (
+                    <option key={header} value={header}>
+                      {header}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-[#d8e8f6] bg-white p-5 shadow-sm">
+          <h2 className="text-lg font-bold text-[#006eb3]">5. Vista previa de datos</h2>
+          <p className="mt-3 text-sm text-[#53698d]">
+            Se muestran las primeras 5 filas con el mapeo aplicado.
+          </p>
+          <div className="mt-5 overflow-x-auto">
+            <table className="min-w-[760px] w-full text-left text-xs">
+              <thead className="bg-[#f2f8fe] font-bold">
+                <tr>
+                  <th className="px-3 py-3">RUC</th>
+                  <th className="px-3 py-3">Razon social</th>
+                  <th className="px-3 py-3">Nombre corto</th>
+                  <th className="px-3 py-3">Codigo entidad</th>
+                  <th className="px-3 py-3">Descripcion entidad</th>
+                  <th className="px-3 py-3">Condicion</th>
+                  <th className="px-3 py-3">Medio de pago</th>
+                  <th className="px-3 py-3">IGV</th>
+                </tr>
+              </thead>
+              <tbody>
+                {preview?.rows.map((row) => (
+                  <tr className="border-t border-[#e2edf8]" key={`${row.ruc}-${row.shortName}`}>
+                    <td className="px-3 py-3 font-mono">{row.ruc}</td>
+                    <td className="px-3 py-3">{row.businessName}</td>
+                    <td className="px-3 py-3">{row.shortName}</td>
+                    <td className="px-3 py-3">{row.contasisEntityCode}</td>
+                    <td className="px-3 py-3">{row.contasisEntityDescription}</td>
+                    <td className="px-3 py-3">{row.defaultCondition}</td>
+                    <td className="px-3 py-3">{row.defaultPaymentMethod}</td>
+                    <td className="px-3 py-3">{row.defaultIgvPercent}%</td>
+                  </tr>
+                ))}
+                {!preview || preview.rows.length === 0 ? (
+                  <tr>
+                    <td className="px-3 py-5 text-[#53698d]" colSpan={8}>
+                      Completa el mapeo requerido para ver la vista previa.
+                    </td>
+                  </tr>
+                ) : null}
+              </tbody>
+            </table>
+          </div>
+          {preview ? (
+            <p className="mt-5 text-sm text-[#26466f]">
+              {preview.validRows} filas validas seran importadas. {preview.invalidRows} filas tienen observaciones.
+            </p>
+          ) : null}
+        </section>
+      </div>
+
+      <section className="mt-3 grid gap-3 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+        <div className="rounded-lg border border-[#d8e8f6] bg-white p-5 shadow-sm">
+          <h2 className="text-lg font-bold text-[#006eb3]">6. Confirmar importacion</h2>
+          <div className="mt-5 rounded-md border border-[#9ed8ff] bg-[#f0f9ff] p-4 text-sm leading-6 text-[#072d4a]">
+            Se importaran {preview?.validRows ?? 0} filas con el mapeo configurado.
+            <br />
+            Por favor verifica la vista previa antes de continuar.
+          </div>
+          <div className="mt-12 flex flex-wrap gap-4">
+            <button className="h-11 rounded-md border border-[#c9dbef] px-8 font-semibold" onClick={onBack} type="button">
+              Cancelar
+            </button>
+            <button className="h-11 rounded-md border border-[#c9dbef] px-8 font-semibold" onClick={() => setSummary(null)} type="button">
+              Volver
+            </button>
+            <button
+              className="h-11 rounded-md bg-[#007fcb] px-8 font-semibold text-white disabled:opacity-60"
+              disabled={!preview || preview.validRows === 0 || busy}
+              onClick={() => void confirmImport()}
+              type="button"
+            >
+              Confirmar importacion
+            </button>
+          </div>
+          {message ? <p className="mt-4 text-sm text-red-600">{message}</p> : null}
+        </div>
+
+        <div className="rounded-lg border border-[#d8e8f6] bg-white p-5 shadow-sm">
+          <h2 className="text-lg font-bold text-[#006eb3]">7. Resumen de la importacion</h2>
+          <p className="mt-3 text-sm text-[#53698d]">
+            {summary ? "La importacion se completo correctamente." : "El resumen aparecera despues de confirmar."}
+          </p>
+          <div className="mt-6 grid gap-4 md:grid-cols-4">
+            <SummaryCard label="Creados" value={summary?.created ?? 0} tone="green" />
+            <SummaryCard label="Actualizados" value={summary?.updated ?? 0} tone="blue" />
+            <SummaryCard label="Omitidos" value={summary?.omitted ?? 0} tone="orange" />
+            <SummaryCard label="Errores" value={summary?.errors ?? 0} tone="red" />
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function ImportSteps({ currentStep }: { currentStep: number }) {
+  const steps = [
+    ["Subir archivo", "Archivo Excel"],
+    ["Hojas", "Seleccionar hoja"],
+    ["Columnas", "Detectar columnas"],
+    ["Mapeo", "Asignar campos"],
+    ["Vista previa", "Revisar datos"],
+    ["Confirmar", "Importar datos"],
+    ["Resumen", "Resultado"]
+  ];
+
+  return (
+    <div className="mt-7 flex items-center gap-3 overflow-x-auto pb-1">
+      {steps.map(([title, subtitle], index) => {
+        const step = index + 1;
+        const active = step <= currentStep;
+
+        return (
+          <div className="flex min-w-fit items-center gap-3" key={title}>
+            <div
+              className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold ${
+                active ? "bg-[#007fcb] text-white shadow-lg" : "bg-[#d8e8f6] text-[#40577a]"
+              }`}
+            >
+              {step}
+            </div>
+            <div>
+              <p className="text-sm font-bold">{title}</p>
+              <p className="text-xs text-[#53698d]">{subtitle}</p>
+            </div>
+            {index < steps.length - 1 ? <div className="h-px w-16 bg-[#c9dbef]" /> : null}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function SummaryCard({
+  label,
+  tone,
+  value
+}: {
+  label: string;
+  tone: "green" | "blue" | "orange" | "red";
+  value: number;
+}) {
+  const classes = {
+    green: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    blue: "border-[#c9dbef] bg-[#f0f9ff] text-[#007fcb]",
+    orange: "border-orange-200 bg-orange-50 text-orange-600",
+    red: "border-red-200 bg-red-50 text-red-600"
+  };
+
+  return (
+    <article className={`rounded-md border p-5 text-center ${classes[tone]}`}>
+      <p className="font-semibold">{label}</p>
+      <p className="mt-2 text-4xl font-bold">{value}</p>
+    </article>
+  );
+}
+
 function ClientField({
   form,
   label,
   maxLength,
   name,
   onlyDigits = false,
+  inputMode,
+  step,
   type = "text"
 }: {
   form: ReturnType<typeof useForm<ClientValues>>;
+  inputMode?: "decimal" | "email" | "none" | "numeric" | "search" | "tel" | "text" | "url";
   label: string;
   maxLength?: number;
   name: keyof ClientValues;
   onlyDigits?: boolean;
+  step?: string;
   type?: string;
 }) {
   const error = form.formState.errors[name]?.message;
@@ -931,8 +1495,9 @@ function ClientField({
       {label}
       <input
         className="mt-2 h-11 w-full rounded-md border border-[#c9dbef] px-3 text-sm font-normal outline-none focus:border-[#0aa0ed]"
-        inputMode={onlyDigits ? "numeric" : undefined}
+        inputMode={onlyDigits ? "numeric" : inputMode}
         maxLength={maxLength}
+        step={step}
         type={type}
         {...registration}
         onChange={(event) => {
