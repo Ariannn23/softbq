@@ -67,3 +67,58 @@ export type SireSalesValidation = {
   records: SireSalesRecord[];
   summary: SireSalesSummary;
 };
+
+export type SirePurchaseRecord = {
+  ruc: string;
+  businessName: string;
+  period: string;
+  carSunat: string;
+  issueDate: string;
+  dueDate: string;
+  documentType: string;
+  series: string;
+  year: string;
+  number: string;
+  supplierDocumentType: string;
+  supplierDocumentNumber: string;
+  supplierName: string;
+  taxableBaseDg: number;
+  igvDg: number;
+  taxableBaseDgng: number;
+  igvDgng: number;
+  taxableBaseDng: number;
+  igvDng: number;
+  nonTaxedAcquisitionValue: number;
+  isc: number;
+  icbper: number;
+  otherCharges: number;
+  total: number;
+  currency: string;
+  exchangeRate: number;
+  modifiedIssueDate: string;
+  modifiedDocumentType: string;
+  modifiedSeries: string;
+  damDsiCode: string;
+  modifiedNumber: string;
+  goodsServicesClassification: string;
+  detraction: string;
+  status: string;
+};
+
+export type SirePurchaseSummary = {
+  carSunatDuplicates: string[];
+  currencies: string[];
+  invalidRows: number;
+  periods: string[];
+  recordsCount: number;
+  rucs: string[];
+  totalCp: number;
+  validRows: number;
+};
+
+export type SirePurchaseValidation = {
+  fileType: SireDetectedFileType;
+  observations: SireObservation[];
+  records: SirePurchaseRecord[];
+  summary: SirePurchaseSummary;
+};
