@@ -55,3 +55,16 @@ export const contasisPurchaseFieldsByColumn = {
   BC: "cigvxacre C(1)",
   BD: "ccodpago C(3)"
 } as const;
+
+export const contasisPurchaseFields = Object.values(contasisPurchaseFieldsByColumn);
+
+export const purchaseFields = contasisPurchaseFields;
+
+export type ContasisPurchaseTechnicalField = (typeof contasisPurchaseFields)[number];
+
+export type ContasisPurchaseFieldName =
+  ContasisPurchaseTechnicalField extends `${infer Name} ${string}` ? Name : never;
+
+export const contasisPurchaseFieldNames = contasisPurchaseFields.map((field) =>
+  field.split(" ")[0]
+) as ContasisPurchaseFieldName[];

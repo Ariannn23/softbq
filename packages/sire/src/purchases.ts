@@ -8,7 +8,6 @@ import type {
   SireRawTable
 } from "./types.js";
 
-const expectedPurchaseColumnCount = 34;
 const amountTolerance = 0.02;
 
 const purchaseColumns = {
@@ -88,16 +87,9 @@ export function validateSirePurchases(table: SireRawTable): SirePurchaseValidati
     });
   }
 
-  if (table.headers.length > 0 && table.headers.length !== expectedPurchaseColumnCount) {
-    observations.push({
-      code: "purchases_header_column_count",
-      message: `El encabezado contiene ${table.headers.length} columnas; se esperaban ${expectedPurchaseColumnCount}.`,
-      severity: "warning"
-    });
-  }
-
   const headerIndex = buildHeaderIndex(table.headers);
   const mappedColumns = mapPurchaseColumns(headerIndex);
+  const expectedRowColumnCount = table.headers.length;
 
   for (const field of requiredPurchaseFields) {
     if (mappedColumns[field] === undefined) {
@@ -118,10 +110,10 @@ export function validateSirePurchases(table: SireRawTable): SirePurchaseValidati
   table.rows.forEach((row, index) => {
     const rowNumber = index + 2;
 
-    if (row.length !== expectedPurchaseColumnCount) {
+    if (expectedRowColumnCount > 0 && row.length !== expectedRowColumnCount) {
       observations.push({
         code: "purchases_row_column_count",
-        message: `La fila contiene ${row.length} columnas; se esperaban ${expectedPurchaseColumnCount}.`,
+        message: `La fila contiene ${row.length} columnas; se esperaban ${expectedRowColumnCount}.`,
         rowNumber,
         severity: "error"
       });

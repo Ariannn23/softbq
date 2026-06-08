@@ -1,4 +1,14 @@
 export {
+  contasisPurchaseFieldNames,
+  contasisPurchaseFields,
+  contasisPurchaseFieldsByColumn,
+  purchaseFields
+} from "./fields/purchaseFields.js";
+export type {
+  ContasisPurchaseFieldName,
+  ContasisPurchaseTechnicalField
+} from "./fields/purchaseFields.js";
+export {
   contasisSalesFieldNames,
   contasisSalesFields,
   salesFields
@@ -8,6 +18,15 @@ export type {
   ContasisSalesTechnicalField
 } from "./fields/salesFields.js";
 export {
+  mapPurchasesToContasis
+} from "./mappers/purchaseMapper.js";
+export type {
+  ContasisPurchaseClientConfig,
+  ContasisPurchaseRow,
+  ContasisPurchaseValue,
+  MapPurchasesToContasisInput
+} from "./mappers/purchaseMapper.js";
+export {
   mapSalesToContasis
 } from "./mappers/salesMapper.js";
 export type {
@@ -16,6 +35,13 @@ export type {
   ContasisSalesValue,
   MapSalesToContasisInput
 } from "./mappers/salesMapper.js";
+export {
+  validateContasisPurchaseRows
+} from "./validators/purchaseValidator.js";
+export type {
+  ContasisPurchaseValidationIssue,
+  ContasisPurchaseValidationResult
+} from "./validators/purchaseValidator.js";
 export {
   validateContasisSalesRows
 } from "./validators/salesValidator.js";
