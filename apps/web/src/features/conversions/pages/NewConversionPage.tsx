@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { UploadCloud, X, AlertCircle } from "lucide-react";
 
@@ -10,7 +10,19 @@ export function NewConversionPage() {
   const navigate = useNavigate();
   const [clients, setClients] = useState<Client[]>([]);
   const [clientId, setClientId] = useState("");
-  const [period, setPeriod] = useState("");
+  const now = useMemo(() => new Date(), []);
+  const years = useMemo(() => Array.from({ length: 10 }, (_, i) => String(now.getFullYear() - i)), [now]);
+  const months = useMemo(() => [
+    { value: "01", label: "Enero" }, { value: "02", label: "Febrero" },
+    { value: "03", label: "Marzo" }, { value: "04", label: "Abril" },
+    { value: "05", label: "Mayo" }, { value: "06", label: "Junio" },
+    { value: "07", label: "Julio" }, { value: "08", label: "Agosto" },
+    { value: "09", label: "Septiembre" }, { value: "10", label: "Octubre" },
+    { value: "11", label: "Noviembre" }, { value: "12", label: "Diciembre" }
+  ], []);
+
+  const [selectedMonth, setSelectedMonth] = useState(String(now.getMonth() + 1).padStart(2, "0"));
+  const [selectedYear, setSelectedYear] = useState(String(now.getFullYear()));
   const [salesFile, setSalesFile] = useState<File | null>(null);
   const [purchasesFile, setPurchasesFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,10 +37,6 @@ export function NewConversionPage() {
         setClientId(firstClient.id.toString());
       }
     });
-
-    const now = new Date();
-    const currentPeriod = `\${now.getFullYear()}\${String(now.getMonth() + 1).padStart(2, "0")}`;
-    setPeriod(currentPeriod);
   }, []);
 
   const handleFileDrop = (e: React.DragEvent<HTMLDivElement>, type: "sales" | "purchases") => {
@@ -48,6 +56,8 @@ export function NewConversionPage() {
       setError("Debe seleccionar un cliente.");
       return;
     }
+
+    const period = `${selectedYear}${selectedMonth}`;
 
     if (!period || !/^\d{6}$/.test(period)) {
       setError("El periodo debe tener el formato YYYYMM.");
@@ -101,14 +111,31 @@ export function NewConversionPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">2. Periodo (YYYYMM)</label>
-              <input
-                type="text"
-                placeholder="202405"
-                className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                value={period}
-                onChange={(e) => setPeriod(e.target.value)}
-              />
+              <label className="block text-sm font-medium text-slate-700 mb-2">2. Periodo</label>
+              <div className="flex gap-2">
+                <select
+                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(e.target.value)}
+                >
+                  {months.map((m) => (
+                    <option key={m.value} value={m.value}>
+                      {m.label}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(e.target.value)}
+                >
+                  {years.map((y) => (
+                    <option key={y} value={y}>
+                      {y}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
 

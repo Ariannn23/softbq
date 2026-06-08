@@ -1,12 +1,12 @@
 import { BarChart3, ChevronDown, FileSpreadsheet, Files, HelpCircle, Home, Laptop, LogOut, Menu, Settings, User, Users } from "lucide-react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 
 import type { SessionUser } from "../shared/types";
 import { BrandMark } from "../shared/ui";
 
 const navItems = [
   { path: "/dashboard", label: "Panel Principal", icon: Home, enabled: true },
-  { path: "/conversiones", label: "Conversiones", icon: FileSpreadsheet, enabled: false },
+  { path: "/conversiones/nueva", label: "Conversiones", icon: FileSpreadsheet, enabled: true },
   { path: "/clientes", label: "Clientes", icon: Users, enabled: true },
   { path: "/archivos-generados", label: "Archivos Generados", icon: Files, enabled: false },
   { path: "/reportes", label: "Reportes", icon: BarChart3, enabled: false },
@@ -22,6 +22,8 @@ export function AppLayout({
   onLogout: () => void;
   user: SessionUser;
 }) {
+  const location = useLocation();
+
   return (
     <main className="min-h-screen bg-[#f5faff] text-[#072d4a]">
       <aside className="fixed inset-y-0 left-0 hidden w-[270px] bg-gradient-to-b from-[#0aa0ed] via-[#055687] to-[#072d4a] text-white lg:flex lg:flex-col">
@@ -46,7 +48,7 @@ export function AppLayout({
             return (
               <NavLink
                 className={({ isActive }) => `flex h-12 w-full items-center gap-4 rounded-md px-4 text-left text-sm font-medium transition ${
-                  isActive || (item.path === "/clientes" && location.pathname === "/importar-clientes")
+                  isActive || (item.path === "/clientes" && location.pathname === "/importar-clientes") || (item.path === "/conversiones/nueva" && location.pathname.startsWith("/conversiones"))
                     ? "bg-[#0b8ff0] shadow-lg"
                     : "text-white/90 hover:bg-white/10"
                 }`}

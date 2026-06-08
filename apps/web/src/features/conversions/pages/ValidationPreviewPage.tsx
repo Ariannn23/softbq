@@ -95,7 +95,7 @@ function ValidationCard({ result, title, iconColor }: { result: ConversionValida
     return (
       <div className="bg-white border border-red-200 rounded-lg overflow-hidden shadow-sm">
         <div className="p-4 border-b border-red-100 bg-red-50 flex items-center justify-between">
-          <h3 className={`font-bold \${iconColor} flex items-center gap-2`}>{title}</h3>
+          <h3 className={`font-bold ${iconColor} flex items-center gap-2`}>{title}</h3>
           <span className="text-xs font-medium text-red-700 bg-red-100 px-2 py-1 rounded">Error en archivo</span>
         </div>
         <div className="p-6">
@@ -110,7 +110,7 @@ function ValidationCard({ result, title, iconColor }: { result: ConversionValida
   return (
     <div className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm flex flex-col">
       <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-        <h3 className={`font-bold \${iconColor} flex items-center gap-2`}>{title}</h3>
+        <h3 className={`font-bold ${iconColor} flex items-center gap-2`}>{title}</h3>
         <span className="text-xs font-medium text-green-700 bg-green-100 px-2 py-1 rounded">Archivo válido</span>
       </div>
 
@@ -148,13 +148,13 @@ function ValidationCard({ result, title, iconColor }: { result: ConversionValida
           </div>
           <div>
             <span className="text-slate-500 text-xs block mb-1">Errores críticos</span>
-            <span className={`font-semibold \${observations.critical.length > 0 ? "text-red-600" : "text-slate-800"}`}>
+            <span className={`font-semibold ${observations.critical.length > 0 ? "text-red-600" : "text-slate-800"}`}>
               {observations.critical.length}
             </span>
           </div>
           <div>
             <span className="text-slate-500 text-xs block mb-1">Advertencias</span>
-            <span className={`font-semibold \${observations.warnings.length > 0 ? "text-orange-500" : "text-slate-800"}`}>
+            <span className={`font-semibold ${observations.warnings.length > 0 ? "text-orange-500" : "text-slate-800"}`}>
               {observations.warnings.length}
             </span>
           </div>
@@ -163,18 +163,18 @@ function ValidationCard({ result, title, iconColor }: { result: ConversionValida
         <div className="space-y-3">
           <AlertBox
             type="error"
-            title={`Errores críticos (\${observations.critical.length})`}
+            title={`Errores críticos (${observations.critical.length})`}
             items={observations.critical}
             emptyMessage="No se encontraron errores críticos."
           />
           <AlertBox
             type="warning"
-            title={`Advertencias (\${observations.warnings.length})`}
+            title={`Advertencias (${observations.warnings.length})`}
             items={observations.warnings}
           />
           <AlertBox
             type="info"
-            title={`Observaciones informativas (\${observations.info.length})`}
+            title={`Observaciones informativas (${observations.info.length})`}
             items={observations.info}
           />
         </div>
@@ -214,7 +214,7 @@ function AlertBox({
   };
 
   return (
-    <div className={`border rounded-md p-3 \${styles[type]}`}>
+    <div className={`border rounded-md p-3 ${styles[type]}`}>
       <div className="flex gap-2">
         {icons[type]}
         <div>
@@ -222,7 +222,7 @@ function AlertBox({
           {items.length > 0 ? (
             <ul className="text-xs space-y-1 list-disc ml-4">
               {items.slice(0, 5).map((item, i) => (
-                <li key={i}>{item.message} {item.rowNumber ? `(Fila \${item.rowNumber})` : ""}</li>
+                <li key={i}>{item.message} {item.rowNumber ? `(Fila ${item.rowNumber})` : ""}</li>
               ))}
               {items.length > 5 && (
                 <li className="italic">... y {items.length - 5} más</li>
