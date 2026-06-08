@@ -1,0 +1,22 @@
+{
+  "name": "softbq",
+  "private": true,
+  "version": "0.1.0",
+  "description": "SOFTBQ - Convertidor local de SIRE SUNAT a formatos Contasis SQL.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm:dev --workspace @softbq/server\" \"npm:dev --workspace @softbq/web\"",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "db:push": "npm run db:push --workspace @softbq/db",
+    "db:seed": "npm run db:seed --workspace @softbq/db"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "typescript": "^5.8.3"
+  }
+}
