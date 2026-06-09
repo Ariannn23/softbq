@@ -5,6 +5,7 @@ import { UploadCloud, X, AlertCircle } from "lucide-react";
 import { fetchClients } from "../../clients/services/clientsApi";
 import type { Client } from "../../shared/types";
 import { validateConversions, ValidationResponse } from "../services/conversionsApi";
+import { ClientCombobox } from "../../shared/ui/ClientCombobox";
 
 export function NewConversionPage() {
   const navigate = useNavigate();
@@ -96,21 +97,15 @@ export function NewConversionPage() {
       <form onSubmit={handleSubmit} className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
         <div className="p-6 space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
+            <div className="z-20">
               <label className="block text-sm font-medium text-slate-700 mb-2">1. Cliente</label>
-              <select
-                className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              <ClientCombobox
+                clients={clients}
                 value={clientId}
-                onChange={(e) => setClientId(e.target.value)}
-              >
-                {clients.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.ruc} - {c.businessName}
-                  </option>
-                ))}
-              </select>
+                onChange={(val) => setClientId(val.toString())}
+              />
             </div>
-            <div>
+            <div className="z-10">
               <label className="block text-sm font-medium text-slate-700 mb-2">2. Periodo</label>
               <div className="flex gap-2">
                 <select
@@ -187,7 +182,7 @@ export function NewConversionPage() {
         <div className="bg-slate-50 px-6 py-4 flex justify-between items-center border-t border-slate-200">
           <button
             type="button"
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/conversiones")}
             className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Cancelar

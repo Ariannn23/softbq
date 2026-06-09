@@ -1,4 +1,4 @@
-import { BarChart3, ChevronDown, FileSpreadsheet, Files, HelpCircle, Home, Laptop, LogOut, Menu, Settings, User, Users } from "lucide-react";
+import { BarChart3, ChevronDown, CircleDollarSign, FileSpreadsheet, Files, HelpCircle, Home, Laptop, LogOut, Menu, Settings, User, Users } from "lucide-react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
 import type { SessionUser } from "../shared/types";
@@ -8,6 +8,7 @@ const navItems = [
   { path: "/dashboard", label: "Panel Principal", icon: Home, enabled: true },
   { path: "/conversiones", label: "Conversiones", icon: FileSpreadsheet, enabled: true },
   { path: "/clientes", label: "Clientes", icon: Users, enabled: true },
+  { path: "/billing", label: "Cobranzas", icon: CircleDollarSign, enabled: true },
   { path: "/archivos-generados", label: "Archivos Generados", icon: Files, enabled: false },
   { path: "/reportes", label: "Reportes", icon: BarChart3, enabled: false },
   { path: "/configuracion", label: "Configuracion", icon: Settings, enabled: false },

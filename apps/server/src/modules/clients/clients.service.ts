@@ -28,6 +28,7 @@ export type ClientInput = {
   defaultCondition: string;
   defaultPaymentMethod: string;
   defaultIgvPercent: number;
+  monthlyFee?: number | null;
 };
 
 function ensureClientPermission(user: AuthenticatedUser | undefined) {
@@ -66,6 +67,7 @@ function toClient(record: Awaited<ReturnType<typeof findClientById>>): Client {
     defaultCondition: record.defaultCondition,
     defaultPaymentMethod: record.defaultPaymentMethod,
     defaultIgvPercent: record.defaultIgvPercent,
+    monthlyFee: record.monthlyFee,
     createdAt: record.createdAt,
     updatedAt: record.updatedAt
   };
@@ -80,7 +82,8 @@ function normalizeClientInput(input: ClientInput): ClientInput {
     contasisEntityDescription: input.contasisEntityDescription.trim(),
     defaultCondition: input.defaultCondition.trim(),
     defaultPaymentMethod: input.defaultPaymentMethod.trim(),
-    defaultIgvPercent: input.defaultIgvPercent
+    defaultIgvPercent: input.defaultIgvPercent,
+    monthlyFee: input.monthlyFee ?? null
   };
 }
 

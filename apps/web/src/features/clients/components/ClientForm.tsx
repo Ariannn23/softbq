@@ -29,6 +29,7 @@ export function ClientForm({
         <ClientField form={form} label="Condicion" name="defaultCondition" />
         <ClientField form={form} label="Medio de pago" name="defaultPaymentMethod" />
         <ClientField form={form} inputMode="decimal" label="IGV" name="defaultIgvPercent" step="0.01" type="number" />
+        <ClientField form={form} inputMode="decimal" label="Honorarios" name="monthlyFee" step="0.01" type="number" />
         <div className="flex items-end gap-3 xl:col-span-4">
           <button className="h-11 rounded-md bg-[#007fcb] px-7 font-semibold text-white" type="submit">Guardar</button>
           <button className="h-11 rounded-md border border-[#c9dbef] px-7 font-semibold" onClick={onCancel} type="button">Cancelar</button>

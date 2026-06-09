@@ -19,7 +19,8 @@ const clientSchema = z.object({
   contasisEntityDescription: z.string().trim().min(1).default("MI ORGANIZACION"),
   defaultCondition: z.string().trim().min(1).default("CON"),
   defaultPaymentMethod: z.string().trim().min(1).default("008"),
-  defaultIgvPercent: z.coerce.number().min(0).max(100).default(18)
+  defaultIgvPercent: z.coerce.number().min(0).max(100).default(18),
+  monthlyFee: z.coerce.number().min(0).optional().nullable()
 });
 
 const paramsSchema = z.object({

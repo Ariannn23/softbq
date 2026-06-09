@@ -92,16 +92,16 @@ export function ValidationPreviewPage() {
       </div>
 
       <div className="bg-white px-6 py-4 flex justify-between items-center border border-slate-200 rounded-lg shadow-sm">
-        <div className="flex gap-3">
+        <div className="flex gap-4">
           <button
             onClick={() => navigate("/conversiones/nueva")}
-            className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50"
+            className="px-6 py-2 border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 rounded-lg font-medium transition-colors"
           >
-            Volver a cargar
+            Volver
           </button>
           <button
-            onClick={() => navigate("/dashboard")}
-            className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50"
+            onClick={() => navigate("/conversiones")}
+            className="px-6 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg font-medium transition-colors"
           >
             Cancelar
           </button>

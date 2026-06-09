@@ -6,6 +6,7 @@ import multipart from "@fastify/multipart";
 import { sqlite } from "@softbq/db";
 
 import { authRoutes } from "./modules/auth/auth.routes.js";
+import { billingRoutes } from "./modules/billing/billing.routes.js";
 import { clientsRoutes } from "./modules/clients/clients.routes.js";
 import { conversionsRoutes } from "./modules/conversions/conversions.routes.js";
 import { dashboardRoutes } from "./modules/dashboard/dashboard.routes.js";
@@ -19,6 +20,7 @@ await app.register(cors, {
 await app.register(cookie);
 await app.register(multipart);
 await app.register(authRoutes, { prefix: "/api/auth" });
+await app.register(billingRoutes, { prefix: "/api/billing" });
 await app.register(clientsRoutes, { prefix: "/api/clients" });
 await app.register(conversionsRoutes, { prefix: "/api/conversions" });
 await app.register(dashboardRoutes, { prefix: "/api/dashboard" });

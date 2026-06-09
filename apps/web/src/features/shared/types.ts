@@ -13,7 +13,8 @@ export const clientSchema = z.object({
   contasisEntityDescription: z.string().trim().min(1, "Ingresa la descripcion"),
   defaultCondition: z.string().trim().min(1, "Ingresa la condicion"),
   defaultPaymentMethod: z.string().trim().min(1, "Ingresa el medio de pago"),
-  defaultIgvPercent: z.coerce.number().min(0).max(100)
+  defaultIgvPercent: z.coerce.number().min(0).max(100),
+  monthlyFee: z.coerce.number().min(0).optional().nullable()
 });
 
 export type LoginValues = z.infer<typeof loginSchema>;
@@ -76,7 +77,8 @@ export const emptyClient: ClientValues = {
   contasisEntityDescription: "MI ORGANIZACION",
   defaultCondition: "CON",
   defaultPaymentMethod: "008",
-  defaultIgvPercent: 18
+  defaultIgvPercent: 18,
+  monthlyFee: null
 };
 
 export const importFields: Array<{
@@ -91,5 +93,6 @@ export const importFields: Array<{
   { key: "contasisEntityDescription", label: "Descripcion entidad Contasis" },
   { key: "defaultCondition", label: "Condicion por defecto" },
   { key: "defaultPaymentMethod", label: "Medio de pago por defecto" },
-  { key: "defaultIgvPercent", label: "IGV por defecto" }
+  { key: "defaultIgvPercent", label: "IGV por defecto" },
+  { key: "monthlyFee", label: "Honorarios mensuales" }
 ];

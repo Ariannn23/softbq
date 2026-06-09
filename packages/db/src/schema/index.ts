@@ -46,6 +46,7 @@ export const clients = sqliteTable(
     defaultCondition: text("default_condition").notNull().default("CON"),
     defaultPaymentMethod: text("default_payment_method").notNull().default("008"),
     defaultIgvPercent: real("default_igv_percent").notNull().default(18),
+    monthlyFee: real("monthly_fee"),
     createdAt: text("created_at").notNull().default(currentTimestamp),
     updatedAt: text("updated_at").notNull().default(currentTimestamp)
   },
@@ -130,19 +131,60 @@ export const settings = sqliteTable(
   (table) => [uniqueIndex("settings_key_unique").on(table.key)]
 );
 
+export const billingCharges = sqliteTable("billing_charges", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  clientId: integer("client_id")
+    .notNull()
+    .references(() => clients.id, { onDelete: "restrict" }),
+  period: text("period"), // Can be null if it's a one-off charge not tied to a specific month
+  concept: text("concept").notNull(),
+  totalAmount: real("total_amount").notNull(),
+  status: text("status").notNull().default("pendiente"), // "pendiente", "parcial", "pagado"
+  createdAt: text("created_at").notNull().default(currentTimestamp),
+  updatedAt: text("updated_at").notNull().default(currentTimestamp)
+});
+
+export const billingPayments = sqliteTable("billing_payments", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  chargeId: integer("charge_id")
+    .notNull()
+    .references(() => billingCharges.id, { onDelete: "cascade" }),
+  amount: real("amount").notNull(),
+  paymentDate: text("payment_date").notNull(), // ISO date string
+  paymentMethod: text("payment_method").notNull(), // e.g. "Yape", "Transferencia BCP", "Efectivo"
+  notes: text("notes"),
+  createdAt: text("created_at").notNull().default(currentTimestamp)
+});
+
 export const usersRelations = relations(users, ({ many }) => ({
   conversions: many(conversions)
 }));
 
 export const clientsRelations = relations(clients, ({ many }) => ({
   conversions: many(conversions),
-  clientPeriods: many(clientPeriods)
+  clientPeriods: many(clientPeriods),
+  billingCharges: many(billingCharges)
 }));
 
 export const clientPeriodsRelations = relations(clientPeriods, ({ one }) => ({
   client: one(clients, {
     fields: [clientPeriods.clientId],
     references: [clients.id]
+  })
+}));
+
+export const billingChargesRelations = relations(billingCharges, ({ one, many }) => ({
+  client: one(clients, {
+    fields: [billingCharges.clientId],
+    references: [clients.id]
+  }),
+  payments: many(billingPayments)
+}));
+
+export const billingPaymentsRelations = relations(billingPayments, ({ one }) => ({
+  charge: one(billingCharges, {
+    fields: [billingPayments.chargeId],
+    references: [billingCharges.id]
   })
 }));
 

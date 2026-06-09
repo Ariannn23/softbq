@@ -36,6 +36,7 @@ export interface ClientConfig {
   defaultCondition: string;
   defaultPaymentMethod: string;
   defaultIgvPercent: number;
+  monthlyFee?: number | null;
 }
 
 export interface User {
