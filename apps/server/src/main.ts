@@ -8,6 +8,7 @@ import { sqlite } from "@softbq/db";
 import { authRoutes } from "./modules/auth/auth.routes.js";
 import { clientsRoutes } from "./modules/clients/clients.routes.js";
 import { conversionsRoutes } from "./modules/conversions/conversions.routes.js";
+import { dashboardRoutes } from "./modules/dashboard/dashboard.routes.js";
 
 const app = Fastify({ logger: true });
 
@@ -20,6 +21,7 @@ await app.register(multipart);
 await app.register(authRoutes, { prefix: "/api/auth" });
 await app.register(clientsRoutes, { prefix: "/api/clients" });
 await app.register(conversionsRoutes, { prefix: "/api/conversions" });
+await app.register(dashboardRoutes, { prefix: "/api/dashboard" });
 
 app.get("/api/health", async () => ({
   ok: true,

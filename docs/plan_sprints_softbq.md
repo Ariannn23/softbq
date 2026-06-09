@@ -799,3 +799,13 @@ La mejor ruta es:
 
 Asi el sistema crece con datos reales y no con pantallas desconectadas.
 
+
+## Mejoras Futuras (Pendientes de Análisis)
+
+### Sprint Propuesto: Módulo de Edición de Conversiones
+- **Objetivo**: Proveer una interfaz de hoja de cálculo en la web para editar los comprobantes SIRE parseados antes de generar el Excel.
+- **Alcance**: 
+  - Vista de Data Grid con virtualización para manejar miles de comprobantes.
+  - Edición en línea de celdas clave.
+  - Validación en vivo.
+  - Generación de Excel a partir del estado modificado del cliente web.

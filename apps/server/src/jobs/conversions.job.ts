@@ -280,6 +280,27 @@ export async function processConversionJob(data: ConversionJobData) {
     })
     .where(eq(conversions.id, conversionRecord.id));
 
+  if (finalStatus === "generated") {
+    const { clientPeriods } = await import("@softbq/db");
+    const { and, sql } = await import("drizzle-orm");
+    
+    const [existing] = await db.select().from(clientPeriods)
+      .where(and(eq(clientPeriods.clientId, data.clientId), eq(clientPeriods.period, data.period)));
+      
+    if (existing) {
+      await db.update(clientPeriods)
+        .set({ status: "generado", updatedAt: sql`(CURRENT_TIMESTAMP)` })
+        .where(eq(clientPeriods.id, existing.id));
+    } else {
+      await db.insert(clientPeriods)
+        .values({
+           clientId: data.clientId,
+           period: data.period,
+           status: "generado"
+        });
+    }
+  }
+
   return {
     conversionId: conversionRecord.id,
     sales: data.salesFile ? {

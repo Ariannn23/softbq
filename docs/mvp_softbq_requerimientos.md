@@ -1758,3 +1758,7 @@ La estructura debe permitir:
 - Escalar a version portable o instalable.
 - Agregar reglas contables en el futuro sin romper la base.
 - Agregar integracion SIRE en el futuro si se decide.
+
+## 46. Mejoras Futuras Pendientes de Análisis
+
+- **Módulo de Edición Pre-Generación**: Interfaz de tabla de datos (data grid virtualizado) que permita a los contadores visualizar y editar las celdas de los comprobantes detectados (RUCs, importes, clasificaciones, etc.) directamente en la web _antes_ de generar y descargar el archivo Excel final de Contasis. Esto ahorra tiempo y evita modificaciones manuales posteriores en el archivo de salida.

@@ -3,7 +3,8 @@ import type {
   ConversionStatus,
   ObservationSeverity,
   SireFileType,
-  UserRole
+  UserRole,
+  PeriodStatus
 } from "@softbq/core";
 import { relations, sql } from "drizzle-orm";
 import {
@@ -49,6 +50,20 @@ export const clients = sqliteTable(
     updatedAt: text("updated_at").notNull().default(currentTimestamp)
   },
   (table) => [uniqueIndex("clients_ruc_unique").on(table.ruc)]
+);
+
+export const clientPeriods = sqliteTable(
+  "client_periods",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    clientId: integer("client_id")
+      .notNull()
+      .references(() => clients.id, { onDelete: "restrict" }),
+    period: text("period").notNull(),
+    status: text("status").$type<PeriodStatus>().notNull().default("pendiente"),
+    updatedAt: text("updated_at").notNull().default(currentTimestamp)
+  },
+  (table) => [uniqueIndex("client_periods_unique_period").on(table.clientId, table.period)]
 );
 
 export const conversions = sqliteTable("conversions", {
@@ -120,7 +135,15 @@ export const usersRelations = relations(users, ({ many }) => ({
 }));
 
 export const clientsRelations = relations(clients, ({ many }) => ({
-  conversions: many(conversions)
+  conversions: many(conversions),
+  clientPeriods: many(clientPeriods)
+}));
+
+export const clientPeriodsRelations = relations(clientPeriods, ({ one }) => ({
+  client: one(clients, {
+    fields: [clientPeriods.clientId],
+    references: [clients.id]
+  })
 }));
 
 export const conversionsRelations = relations(conversions, ({ one, many }) => ({
