@@ -14,7 +14,7 @@ export function MetricCard({
   value: number;
 }) {
   const colors = {
-    blue: "bg-[#dff1ff] text-[#007fcb]",
+    blue: "bg-[#dff1ff] text-[#056ba6]",
     green: "bg-emerald-100 text-emerald-700",
     orange: "bg-orange-100 text-orange-600",
     purple: "bg-violet-100 text-violet-700",
@@ -29,7 +29,7 @@ export function MetricCard({
         </div>
         <div>
           <p className="text-sm font-semibold">{label}</p>
-          <p className="text-3xl font-bold text-[#007fcb]">{value}</p>
+          <p className="text-3xl font-bold text-[#056ba6]">{value}</p>
         </div>
       </div>
       <p className="mt-4 text-sm text-[#53698d]">{help}</p>

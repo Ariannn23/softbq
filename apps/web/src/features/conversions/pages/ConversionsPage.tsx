@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Calendar, Filter, FileSpreadsheet, AlertCircle, RefreshCcw, Eye, Search, ChevronLeft, ChevronRight, CheckCircle2, Info, Loader2, XCircle } from "lucide-react";
+import { Calendar, Filter, FileSpreadsheet, AlertCircle, RefreshCcw, Eye, Search, CheckCircle2, Info, Loader2, XCircle, PlusCircle } from "lucide-react";
 import { getConversions, type ConversionHistoryItem, type ConversionHistoryResponse } from "../services/conversionsApi";
 import { fetchClients } from "../../clients/services/clientsApi";
 import type { Client } from "../../shared/types";
+import { Pagination } from "../../shared/Pagination";
 
 export function ConversionsPage() {
   const navigate = useNavigate();
@@ -93,18 +94,14 @@ export function ConversionsPage() {
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-sm text-blue-600 mb-2">
-            <Link to="/conversiones" className="hover:underline font-medium">Conversiones</Link>
-            <span className="text-slate-400">/</span>
-            <span className="text-slate-600">Historial</span>
-          </div>
           <h1 className="text-2xl font-bold text-slate-800">Historial de conversiones</h1>
           <p className="text-slate-500 mt-1">Consulta las conversiones realizadas en el sistema.</p>
         </div>
         <Link 
-          to="/conversiones/nueva"
-          className="flex h-10 items-center justify-center gap-2 rounded-md bg-[#007fcb] px-4 text-sm font-semibold text-white shadow hover:bg-[#056ba6] transition-colors"
+          to="/conversions/new"
+          className="flex h-[42.4px] items-center justify-center gap-3 rounded-md bg-[#056ba6] px-6 font-semibold text-white hover:bg-[#045585] transition-colors"
         >
+          <PlusCircle size={20} />
           Nueva conversión
         </Link>
       </div>
@@ -277,7 +274,7 @@ export function ConversionsPage() {
                               sizeBytes: item.files.purchases.sizeKb * 1024
                             } : null
                           };
-                          navigate(`/conversiones/resultado/${item.id}`, { state: { result: resultPayload } });
+                          navigate(`/conversions/result/${item.id}`, { state: { result: resultPayload } });
                         }}
                         className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors tooltip-trigger"
                         title="Ver detalles"
@@ -294,48 +291,19 @@ export function ConversionsPage() {
 
         {/* Pagination footer */}
         {data && data.pagination.totalPages > 0 && (
-          <div className="bg-white border-t border-slate-200 px-4 py-3 flex items-center justify-between">
-            <div className="text-sm text-slate-600">
-              Mostrando <span className="font-semibold">{(page - 1) * limit + 1}</span> a <span className="font-semibold">{Math.min(page * limit, data.pagination.total)}</span> de <span className="font-semibold">{data.pagination.total}</span> conversiones
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <select 
-                  value={limit} 
-                  onChange={(e) => {
-                    setLimit(Number(e.target.value));
-                    setPage(1);
-                  }}
-                  className="text-sm border border-slate-300 rounded px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                >
-                  <option value="10">10</option>
-                  <option value="25">25</option>
-                  <option value="50">50</option>
-                </select>
-                <span className="text-sm text-slate-600">por página</span>
-              </div>
-              
-              <div className="flex items-center gap-1">
-                <button 
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="p-1 border border-slate-300 rounded bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <span className="text-sm font-medium px-2 min-w-[2rem] text-center">
-                  {page}
-                </span>
-                <button 
-                  onClick={() => setPage(p => Math.min(data.pagination.totalPages, p + 1))}
-                  disabled={page === data.pagination.totalPages}
-                  className="p-1 border border-slate-300 rounded bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
+          <div className="bg-white border-t border-slate-200">
+            <Pagination
+              currentPage={page}
+              totalPages={data.pagination.totalPages}
+              totalItems={data.pagination.total}
+              pageSize={limit}
+              onPageChange={setPage}
+              onPageSizeChange={(newLimit) => {
+                setLimit(newLimit);
+                setPage(1);
+              }}
+              itemName="conversiones"
+            />
           </div>
         )}
       </div>

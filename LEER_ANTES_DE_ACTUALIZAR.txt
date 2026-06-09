@@ -1,0 +1,18 @@
+======================================================
+ INSTRUCCIONES DE ACTUALIZACION DE SOFTBQ (CONTADOR)
+======================================================
+
+Si el equipo de desarrollo te envia una nueva version del programa (.zip),
+por favor sigue estas instrucciones para NO PERDER TU BASE DE DATOS NI TUS CLIENTES:
+
+1. Descomprime la nueva version en una carpeta temporal.
+2. Copia todo el contenido de la nueva version.
+3. Pegalo en esta carpeta actual de tu programa.
+4. Cuando el sistema te pregunte si deseas reemplazar los archivos, dile que SI A TODO.
+5. IMPORTANTE: ASEGURATE DE QUE LA CARPETA "storage" DE ESTE DIRECTORIO NUNCA SEA ELIMINADA. 
+   La carpeta "storage" contiene:
+   - softbq.db (Tu base de datos con clientes, pagos y registros)
+   - uploads/ (Archivos temporales)
+   - outputs/ (Los excels que has generado)
+
+Nota: Solo reemplaza los archivos y luego vuelve a ejecutar "SOFTBQ.bat". El sistema aplicara la actualizacion sola.

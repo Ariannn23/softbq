@@ -18,7 +18,7 @@ export function ClientForm({
     <section className="mt-6 rounded-lg border border-[#d8e8f6] bg-white p-6 shadow-sm">
       <div className="mb-5 flex items-center justify-between">
         <h2 className="text-xl font-bold">{editingClient ? "Editar cliente" : "Crear cliente"}</h2>
-        <button className="text-sm font-semibold text-[#007fcb]" onClick={onCancel} type="button">Cerrar</button>
+        <button className="text-sm font-semibold text-[#056ba6]" onClick={onCancel} type="button">Cerrar</button>
       </div>
       <form className="grid gap-4 md:grid-cols-2 xl:grid-cols-4" onSubmit={form.handleSubmit(onSubmit)}>
         <ClientField form={form} label="RUC" maxLength={11} name="ruc" onlyDigits />
@@ -30,8 +30,23 @@ export function ClientForm({
         <ClientField form={form} label="Medio de pago" name="defaultPaymentMethod" />
         <ClientField form={form} inputMode="decimal" label="IGV" name="defaultIgvPercent" step="0.01" type="number" />
         <ClientField form={form} inputMode="decimal" label="Honorarios" name="monthlyFee" step="0.01" type="number" />
-        <div className="flex items-end gap-3 xl:col-span-4">
-          <button className="h-11 rounded-md bg-[#007fcb] px-7 font-semibold text-white" type="submit">Guardar</button>
+        <ClientField form={form} label="Cuenta de ventas" name="salesAccount" />
+        <ClientField form={form} label="Cuenta de compras" name="purchasesAccount" />
+        
+        <div className="flex flex-col gap-1">
+          <label className="text-[13px] font-semibold uppercase text-slate-500">¿Declara PLAME?</label>
+          <label className="relative inline-flex cursor-pointer items-center mt-2">
+            <input
+              type="checkbox"
+              className="peer sr-only"
+              {...form.register("hasPlame")}
+            />
+            <div className="peer h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
+          </label>
+        </div>
+
+        <div className="flex items-end gap-3 xl:col-span-4 mt-2">
+          <button className="h-11 rounded-md bg-[#056ba6] px-7 font-semibold text-white" type="submit">Guardar</button>
           <button className="h-11 rounded-md border border-[#c9dbef] px-7 font-semibold" onClick={onCancel} type="button">Cancelar</button>
         </div>
       </form>

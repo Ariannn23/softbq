@@ -4,12 +4,14 @@ export type ClientPeriodStatus =
   | "compras_cargadas" 
   | "generado" 
   | "revisado" 
-  | "declarado";
+  | "declarado"
+  | "plame_declarado";
 
 export type DashboardClientInfo = {
   id: number;
   ruc: string;
   businessName: string;
+  hasPlame?: boolean;
   status: ClientPeriodStatus;
 };
 
@@ -21,6 +23,7 @@ export interface DashboardSummary {
   generado: number;
   revisado: number;
   declarado: number;
+  plameDeclarado: number;
 };
 
 export type DashboardResponse = {

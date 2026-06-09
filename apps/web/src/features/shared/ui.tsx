@@ -3,10 +3,12 @@ import { Search } from "lucide-react";
 
 export function BrandMark({
   dark = false,
-  size
+  size,
+  iconOnly = false
 }: {
   dark?: boolean;
   size: "md" | "lg" | "xl";
+  iconOnly?: boolean;
 }) {
   const markSize = size === "xl" ? "h-20 w-20 text-5xl" : size === "lg" ? "h-16 w-16 text-4xl" : "h-12 w-12 text-3xl";
   const wordSize = size === "xl" ? "text-6xl" : size === "lg" ? "text-4xl" : "text-3xl";
@@ -16,9 +18,11 @@ export function BrandMark({
       <div className={`${markSize} flex shrink-0 items-center justify-center rounded-2xl ${dark ? "bg-[#0aa0ed] text-white" : "bg-white text-[#0aa0ed]"} font-black`}>
         S
       </div>
-      <span className={`${wordSize} font-black tracking-wide ${dark ? "text-[#072d4a]" : "text-white"}`}>
-        SOFT<span className={dark ? "text-[#0aa0ed]" : "text-white"}>BQ</span>
-      </span>
+      {!iconOnly && (
+        <span className={`${wordSize} font-black tracking-wide ${dark ? "text-[#072d4a]" : "text-white"}`}>
+          SOFT<span className={dark ? "text-[#0aa0ed]" : "text-white"}>BQ</span>
+        </span>
+      )}
     </div>
   );
 }
@@ -76,13 +80,15 @@ export function IconButton({
   icon: LucideIcon;
   label: string;
   onClick?: () => void;
-  tone: "blue" | "green" | "gray" | "red";
+  tone: "blue" | "green" | "gray" | "red" | "indigo" | "purple";
 }) {
   const tones = {
-    blue: "border-[#b9d9f9] text-[#007fcb]",
+    blue: "border-[#b9d9f9] text-[#056ba6]",
     green: "border-emerald-200 text-emerald-700",
     gray: "border-slate-200 text-slate-400",
-    red: "border-red-200 text-red-600"
+    red: "border-red-200 text-red-600",
+    indigo: "border-indigo-200 text-indigo-600",
+    purple: "border-purple-200 text-purple-600"
   };
 
   return (

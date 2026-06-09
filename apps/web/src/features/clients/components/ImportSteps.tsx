@@ -17,7 +17,7 @@ export function ImportSteps({ currentStep }: { currentStep: number }) {
 
         return (
           <div className="flex min-w-fit items-center gap-3" key={title}>
-            <div className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold ${active ? "bg-[#007fcb] text-white shadow-lg" : "bg-[#d8e8f6] text-[#40577a]"}`}>
+            <div className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold ${active ? "bg-[#056ba6] text-white shadow-lg" : "bg-[#d8e8f6] text-[#40577a]"}`}>
               {step}
             </div>
             <div>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 
 import { importFields, type ClientImportField, type ImportAnalysis, type ImportPreview, type ImportSummary } from "../../shared/types";
 import { analyzeClientImport, confirmClientImport, previewClientImport } from "../services/clientsApi";
@@ -62,12 +63,17 @@ export function useClientImport(onClientsChanged: () => void) {
     setFileName(file.name);
     setFileSize(`${(file.size / 1024).toFixed(1)} KB`);
 
+    const toastId = toast.loading("Analizando archivo...");
+
     try {
       const nextAnalysis = await analyzeClientImport(file);
       setAnalysis(nextAnalysis);
       setSelectedSheet(nextAnalysis.sheets[0]?.name ?? "");
+      toast.success("Archivo analizado correctamente.", { id: toastId });
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "No se pudo leer el archivo.");
+      const err = error instanceof Error ? error.message : "No se pudo leer el archivo.";
+      setMessage(err);
+      toast.error(err, { id: toastId });
     } finally {
       setBusy(false);
     }
@@ -88,7 +94,9 @@ export function useClientImport(onClientsChanged: () => void) {
         sheetName: selectedSheet
       }));
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "No se pudo generar la vista previa.");
+      const err = error instanceof Error ? error.message : "No se pudo generar la vista previa.";
+      setMessage(err);
+      toast.error(err);
     } finally {
       setBusy(false);
     }
@@ -101,6 +109,7 @@ export function useClientImport(onClientsChanged: () => void) {
 
     setBusy(true);
     setMessage(null);
+    const toastId = toast.loading("Confirmando importación...");
 
     try {
       setSummary(await confirmClientImport({
@@ -109,8 +118,11 @@ export function useClientImport(onClientsChanged: () => void) {
         sheetName: selectedSheet
       }));
       onClientsChanged();
+      toast.success("Importación completada exitosamente.", { id: toastId });
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "No se pudo confirmar la importacion.");
+      const err = error instanceof Error ? error.message : "No se pudo confirmar la importacion.";
+      setMessage(err);
+      toast.error(err, { id: toastId });
     } finally {
       setBusy(false);
     }

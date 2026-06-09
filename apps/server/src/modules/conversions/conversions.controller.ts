@@ -207,7 +207,7 @@ export async function getConversionsController(
   reply: FastifyReply
 ) {
   const { db, conversions, clients, users, conversionFiles } = await import("@softbq/db");
-  const { eq, and, desc, count, sql } = await import("drizzle-orm");
+  const { eq, and, desc, count, sql, asc } = await import("drizzle-orm");
 
   const query = request.query as any;
   const page = parseInt(query.page || "1", 10);
@@ -253,7 +253,7 @@ export async function getConversionsController(
 
   const results = await dbQuery
     .where(finalCondition)
-    .orderBy(desc(conversions.createdAt))
+    .orderBy(asc(clients.businessName), desc(conversions.createdAt))
     .limit(limit)
     .offset(offset);
 

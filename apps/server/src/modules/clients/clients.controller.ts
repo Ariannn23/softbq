@@ -20,7 +20,10 @@ const clientSchema = z.object({
   defaultCondition: z.string().trim().min(1).default("CON"),
   defaultPaymentMethod: z.string().trim().min(1).default("008"),
   defaultIgvPercent: z.coerce.number().min(0).max(100).default(18),
-  monthlyFee: z.coerce.number().min(0).optional().nullable()
+  monthlyFee: z.coerce.number().min(0).optional().nullable(),
+  hasPlame: z.boolean().default(false),
+  salesAccount: z.string().trim().default(""),
+  purchasesAccount: z.string().trim().default("")
 });
 
 const paramsSchema = z.object({

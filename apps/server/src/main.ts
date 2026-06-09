@@ -2,6 +2,9 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import cookie from "@fastify/cookie";
 import multipart from "@fastify/multipart";
+import fastifyStatic from "@fastify/static";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { sqlite } from "@softbq/db";
 
@@ -10,6 +13,7 @@ import { billingRoutes } from "./modules/billing/billing.routes.js";
 import { clientsRoutes } from "./modules/clients/clients.routes.js";
 import { conversionsRoutes } from "./modules/conversions/conversions.routes.js";
 import { dashboardRoutes } from "./modules/dashboard/dashboard.routes.js";
+import { settingsRoutes } from "./modules/settings/settings.routes.js";
 
 const app = Fastify({ logger: true });
 
@@ -24,6 +28,7 @@ await app.register(billingRoutes, { prefix: "/api/billing" });
 await app.register(clientsRoutes, { prefix: "/api/clients" });
 await app.register(conversionsRoutes, { prefix: "/api/conversions" });
 await app.register(dashboardRoutes, { prefix: "/api/dashboard" });
+await app.register(settingsRoutes, { prefix: "/api/settings" });
 
 app.get("/api/health", async () => ({
   ok: true,
@@ -35,6 +40,23 @@ app.get("/api/bootstrap", async () => ({
   users: ["admin", "armando"],
   next: ["auth", "clients", "conversions"]
 }));
+
+// Serve React Frontend
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const webDistPath = path.resolve(__dirname, "../../web/dist");
+
+await app.register(fastifyStatic, {
+  root: webDistPath,
+  prefix: "/",
+  wildcard: false,
+});
+
+app.get("/*", async (request, reply) => {
+  if (request.url.startsWith("/api/")) {
+    return reply.callNotFound();
+  }
+  return reply.sendFile("index.html");
+});
 
 const port = Number(process.env.PORT ?? 3001);
 const host = process.env.HOST ?? "0.0.0.0";

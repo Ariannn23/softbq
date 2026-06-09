@@ -37,6 +37,9 @@ export interface ClientConfig {
   defaultPaymentMethod: string;
   defaultIgvPercent: number;
   monthlyFee?: number | null;
+  hasPlame: boolean;
+  salesAccount: string;
+  purchasesAccount: string;
 }
 
 export interface User {

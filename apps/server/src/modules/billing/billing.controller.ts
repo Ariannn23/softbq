@@ -7,7 +7,8 @@ import {
   BillingServiceError,
   generateMonthlyCharges,
   listCharges,
-  getClientBillingHistory
+  getClientBillingHistory,
+  updateChargeAmount
 } from "./billing.service.js";
 
 const listQuerySchema = z.object({
@@ -146,6 +147,31 @@ export async function getClientBillingHistoryController(
       clientId: Number(request.params.clientId)
     });
     return reply.code(200).send(result);
+  } catch (error) {
+    return handleBillingError(error, reply);
+  }
+}
+
+export async function updateAmountController(
+  request: FastifyRequest<{ Params: { chargeId: string }, Body: { amount: number } }>,
+  reply: FastifyReply
+) {
+  const amountSchema = z.object({
+    amount: z.number().positive()
+  });
+
+  const body = amountSchema.safeParse(request.body);
+  if (!body.success) {
+    return reply.code(400).send({ message: "El monto debe ser un nmero positivo." });
+  }
+
+  try {
+    await updateChargeAmount({
+      user: request.user,
+      chargeId: Number(request.params.chargeId),
+      newAmount: body.data.amount
+    });
+    return reply.code(200).send({ success: true });
   } catch (error) {
     return handleBillingError(error, reply);
   }

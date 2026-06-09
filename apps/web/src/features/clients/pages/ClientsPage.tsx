@@ -1,11 +1,15 @@
-import { PlusCircle, Upload } from "lucide-react";
+import { PlusCircle, Upload, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-import type { SessionUser } from "../../shared/types";
+import type { SessionUser, Client } from "../../shared/types";
 import { SearchBox } from "../../shared/ui";
+import { ConfirmModal } from "../../shared/ConfirmModal";
 import { ClientForm } from "../components/ClientForm";
 import { ClientsTable } from "../components/ClientsTable";
+import { ClientDetailsModal } from "../components/ClientDetailsModal";
 import { useClientsPage } from "../hooks/useClientsPage";
+import { Pagination } from "../../shared/Pagination";
+import { useState } from "react";
 
 export function ClientsPage({
   onClientsChanged,
@@ -16,6 +20,7 @@ export function ClientsPage({
 }) {
   const navigate = useNavigate();
   const state = useClientsPage(onClientsChanged);
+  const [viewingClient, setViewingClient] = useState<Client | null>(null);
 
   return (
     <div className="mx-auto max-w-[1540px] px-7 py-8">
@@ -25,11 +30,15 @@ export function ClientsPage({
           <p className="mt-2 text-[#26466f]">Administra la base de clientes del estudio.</p>
         </div>
         <div className="flex gap-4">
-          <button className="flex h-12 items-center gap-3 rounded-md border border-[#c9dbef] bg-white px-6 font-semibold text-[#007fcb] disabled:opacity-60" disabled={user.role !== "admin"} onClick={() => navigate("/importar-clientes")} type="button">
+          <a href="/formato_clientes.xlsx" download className="flex h-[42.4px] items-center gap-3 rounded-md border border-[#c9dbef] bg-white px-6 font-semibold text-[#056ba6] transition-colors hover:bg-slate-50">
+            <Download size={20} />
+            Descargar formato
+          </a>
+          <button className="flex h-[42.4px] items-center gap-3 rounded-md border border-[#c9dbef] bg-white px-6 font-semibold text-[#056ba6] disabled:opacity-60" disabled={user.role !== "admin"} onClick={() => navigate("/clients/import")} type="button">
             <Upload size={20} />
             Importar clientes
           </button>
-          <button className="flex h-12 items-center gap-3 rounded-md bg-[#007fcb] px-6 font-semibold text-white" onClick={state.startCreate} type="button">
+          <button className="flex h-[42.4px] items-center gap-3 rounded-md bg-[#056ba6] px-6 font-semibold text-white hover:bg-[#045585] transition-colors" onClick={state.startCreate} type="button">
             <PlusCircle size={20} />
             Crear cliente
           </button>
@@ -44,19 +53,18 @@ export function ClientsPage({
           clients={state.paginatedClients}
           loading={state.loading}
           onEdit={state.startEdit}
-          onToggleClient={(client, action) => void state.toggleClient(client, action)}
+          onToggleClient={(client, action) => void state.startToggleClient(client, action)}
+          onView={(client) => setViewingClient(client)}
           user={user}
         />
-        <div className="flex items-center justify-between border-t border-[#e2edf8] px-5 py-4 text-sm text-[#53698d]">
-          <span>Mostrando {state.pageStart} a {state.pageEnd} de {state.clients.length} clientes</span>
-          <div className="flex items-center gap-3">
-            <button className="rounded-md border border-[#c9dbef] px-4 py-2 disabled:opacity-50" disabled={state.currentPage === 1} onClick={() => state.setCurrentPage((page) => Math.max(page - 1, 1))} type="button">{"<"}</button>
-            <span className="rounded-md bg-[#007fcb] px-4 py-2 font-semibold text-white">{state.currentPage}</span>
-            <button className="rounded-md border border-[#c9dbef] px-4 py-2 disabled:opacity-50" disabled={state.currentPage >= state.totalPages} onClick={() => state.setCurrentPage((page) => Math.min(page + 1, state.totalPages))} type="button">{">"}</button>
-            <button className="rounded-md border border-[#c9dbef] px-4 py-2" type="button">10</button>
-            <span>por pagina</span>
-          </div>
-        </div>
+        <Pagination
+          currentPage={state.currentPage}
+          totalPages={state.totalPages}
+          totalItems={state.clients.length}
+          pageSize={10}
+          onPageChange={state.setCurrentPage}
+          itemName="clientes"
+        />
       </section>
 
       {state.showForm ? (
@@ -68,7 +76,20 @@ export function ClientsPage({
         />
       ) : null}
 
-      {state.message ? <p className="mt-5 rounded-md border border-[#d8e8f6] bg-white p-4 text-sm text-[#26466f]">{state.message}</p> : null}
+      <ConfirmModal
+        confirmText={state.confirmModalState.action === "disable" ? "S, inhabilitar" : "S, habilitar"}
+        isOpen={state.confirmModalState.isOpen}
+        message={`Seguro que quieres ${state.confirmModalState.action === "disable" ? "inhabilitar" : "habilitar"} al cliente ${state.confirmModalState.client?.businessName}?`}
+        onClose={() => state.setConfirmModalState({ isOpen: false, client: null, action: null })}
+        onConfirm={() => void state.confirmToggleClient()}
+        title={`${state.confirmModalState.action === "disable" ? "Inhabilitar" : "Habilitar"} cliente`}
+      />
+
+      <ClientDetailsModal
+        client={viewingClient}
+        isOpen={Boolean(viewingClient)}
+        onClose={() => setViewingClient(null)}
+      />
     </div>
   );
 }

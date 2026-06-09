@@ -8,7 +8,11 @@ export type ClientImportField =
   | "contasisEntityDescription"
   | "defaultCondition"
   | "defaultPaymentMethod"
-  | "defaultIgvPercent";
+  | "defaultIgvPercent"
+  | "monthlyFee"
+  | "hasPlame"
+  | "salesAccount"
+  | "purchasesAccount";
 
 export type ClientImportMapping = Partial<Record<ClientImportField, string>>;
 
@@ -21,6 +25,10 @@ export type ClientImportRow = {
   defaultCondition: string;
   defaultPaymentMethod: string;
   defaultIgvPercent: number;
+  monthlyFee: number | null;
+  hasPlame: boolean;
+  salesAccount: string;
+  purchasesAccount: string;
 };
 
 export type ClientImportIssue = {
@@ -57,7 +65,11 @@ const fieldAliases: Record<ClientImportField, string[]> = {
   contasisEntityDescription: ["descripcion entidad", "descripcion contasis"],
   defaultCondition: ["condicion", "condicion por defecto"],
   defaultPaymentMethod: ["medio de pago", "medio pago", "forma de pago"],
-  defaultIgvPercent: ["igv", "igv por defecto", "porcentaje igv"]
+  defaultIgvPercent: ["igv", "igv por defecto", "porcentaje igv"],
+  monthlyFee: ["honorarios", "honorario", "honorarios mensuales", "pago mensual"],
+  hasPlame: ["tiene plame", "plame", "declara plame"],
+  salesAccount: ["cuenta de ventas", "cuenta ventas"],
+  purchasesAccount: ["cuenta de compras", "cuenta compras"]
 };
 
 const requiredFields: ClientImportField[] = ["ruc", "businessName"];
@@ -209,12 +221,16 @@ function buildClientRow(input: {
     shortName:
       readMappedCell(input, "shortName") ||
       makeShortName(readMappedCell(input, "businessName")),
-    contasisEntityCode: readMappedCell(input, "contasisEntityCode") || "01",
+    contasisEntityCode: (readMappedCell(input, "contasisEntityCode") || "01").padStart(2, "0"),
     contasisEntityDescription:
       readMappedCell(input, "contasisEntityDescription") || "MI ORGANIZACION",
     defaultCondition: readMappedCell(input, "defaultCondition") || "CON",
     defaultPaymentMethod: readMappedCell(input, "defaultPaymentMethod") || "008",
-    defaultIgvPercent: parseIgv(readMappedCell(input, "defaultIgvPercent"))
+    defaultIgvPercent: parseIgv(readMappedCell(input, "defaultIgvPercent")),
+    monthlyFee: parseMonthlyFee(readMappedCell(input, "monthlyFee")),
+    hasPlame: readMappedCell(input, "hasPlame").toUpperCase() === "SI" || readMappedCell(input, "hasPlame").toUpperCase() === "SÍ" || readMappedCell(input, "hasPlame") === "1",
+    salesAccount: readMappedCell(input, "salesAccount") || "",
+    purchasesAccount: readMappedCell(input, "purchasesAccount") || ""
   };
 }
 
@@ -448,6 +464,18 @@ function parseIgv(value: string): number {
   const parsed = Number(normalized);
 
   return Number.isFinite(parsed) ? parsed : 18;
+}
+
+function parseMonthlyFee(value: string): number | null {
+  const normalized = value.replace(/[^0-9.-]/g, "").trim();
+
+  if (!normalized) {
+    return null;
+  }
+
+  const parsed = Number(normalized);
+
+  return Number.isFinite(parsed) ? parsed : null;
 }
 
 function inferRucColumn(headers: string[], sampleRows: string[][]): string | undefined {

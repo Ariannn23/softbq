@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
 
 import { clientSchema, emptyClient, type Client, type ClientValues } from "../../shared/types";
 import { fetchClients, saveClient as saveClientRequest, updateClientStatus } from "../services/clientsApi";
@@ -13,7 +14,7 @@ export function useClientsPage(onClientsChanged: () => void) {
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState<string | null>(null);
+  const [confirmModalState, setConfirmModalState] = useState<{isOpen: boolean, client: Client | null, action: "enable" | "disable" | null}>({isOpen: false, client: null, action: null});
   const [currentPage, setCurrentPage] = useState(1);
   const clientForm = useForm<ClientValues>({
     resolver: zodResolver(clientSchema),
@@ -34,7 +35,7 @@ export function useClientsPage(onClientsChanged: () => void) {
       setClients(await fetchClients(searchTerm));
       setCurrentPage(1);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "No se pudo cargar clientes.");
+      toast.error(error instanceof Error ? error.message : "No se pudo cargar clientes.");
     } finally {
       setLoading(false);
     }
@@ -57,60 +58,60 @@ export function useClientsPage(onClientsChanged: () => void) {
   function startCreate() {
     setEditingClient(null);
     setShowForm(true);
-    setMessage(null);
     clientForm.reset(emptyClient);
   }
 
   function startEdit(client: Client) {
     if (!client.active) {
-      setMessage("No se puede editar un cliente inhabilitado.");
+      toast.error("No se puede editar un cliente inhabilitado.");
       return;
     }
 
     setEditingClient(client);
     setShowForm(true);
-    setMessage(null);
     clientForm.reset(client);
   }
 
   function clearForm() {
     setEditingClient(null);
     setShowForm(false);
-    setMessage(null);
     clientForm.reset(emptyClient);
   }
 
   async function saveClient(values: ClientValues) {
-    setMessage(null);
-
+    const toastId = toast.loading("Guardando cliente...");
     try {
       await saveClientRequest({
         clientId: editingClient?.id,
         values
       });
-      setMessage(editingClient ? "Cliente actualizado." : "Cliente creado.");
+      toast.success(editingClient ? "Cliente actualizado." : "Cliente creado.", { id: toastId });
       clearForm();
       await loadClients();
       onClientsChanged();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "No se pudo guardar el cliente.");
+      toast.error(error instanceof Error ? error.message : "No se pudo guardar el cliente.", { id: toastId });
     }
   }
 
-  async function toggleClient(client: Client, action: "disable" | "enable") {
-    const confirmed = window.confirm(`${action === "disable" ? "Inhabilitar" : "Habilitar"} cliente ${client.shortName}?`);
+  function startToggleClient(client: Client, action: "disable" | "enable") {
+    setConfirmModalState({isOpen: true, client, action});
+  }
 
-    if (!confirmed) {
-      return;
-    }
+  async function confirmToggleClient() {
+    const { client, action } = confirmModalState;
+    if (!client || !action) return;
 
+    const toastId = toast.loading(`${action === "disable" ? "Inhabilitando" : "Habilitando"} cliente...`);
     try {
       await updateClientStatus({ action, clientId: client.id });
-      setMessage(action === "disable" ? "Cliente inhabilitado." : "Cliente habilitado.");
+      toast.success(action === "disable" ? "Cliente inhabilitado." : "Cliente habilitado.", { id: toastId });
       await loadClients();
       onClientsChanged();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "No se pudo actualizar el estado del cliente.");
+      toast.error(error instanceof Error ? error.message : "No se pudo actualizar el estado del cliente.", { id: toastId });
+    } finally {
+      setConfirmModalState({isOpen: false, client: null, action: null});
     }
   }
 
@@ -121,7 +122,9 @@ export function useClientsPage(onClientsChanged: () => void) {
     currentPage,
     editingClient,
     loading,
-    message,
+    confirmModalState,
+    setConfirmModalState,
+    confirmToggleClient,
     pageEnd,
     pageStart,
     paginatedClients,
@@ -132,7 +135,7 @@ export function useClientsPage(onClientsChanged: () => void) {
     showForm,
     startCreate,
     startEdit,
-    toggleClient,
+    startToggleClient,
     totalPages
   };
 }

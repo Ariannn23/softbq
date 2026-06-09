@@ -9,12 +9,15 @@ export const clientSchema = z.object({
   ruc: z.string().regex(/^\d{11}$/, "El RUC debe tener 11 digitos"),
   businessName: z.string().trim().min(1, "Ingresa la razon social"),
   shortName: z.string().trim().min(1, "Ingresa el nombre corto"),
-  contasisEntityCode: z.string().trim().min(1, "Ingresa el codigo"),
+  contasisEntityCode: z.string().trim().min(1, "Ingresa el codigo").transform(val => val.padStart(2, "0")),
   contasisEntityDescription: z.string().trim().min(1, "Ingresa la descripcion"),
   defaultCondition: z.string().trim().min(1, "Ingresa la condicion"),
   defaultPaymentMethod: z.string().trim().min(1, "Ingresa el medio de pago"),
   defaultIgvPercent: z.coerce.number().min(0).max(100),
-  monthlyFee: z.coerce.number().min(0).optional().nullable()
+  monthlyFee: z.coerce.number().min(0).optional().nullable(),
+  hasPlame: z.boolean(),
+  salesAccount: z.string().trim(),
+  purchasesAccount: z.string().trim()
 });
 
 export type LoginValues = z.infer<typeof loginSchema>;
@@ -78,7 +81,10 @@ export const emptyClient: ClientValues = {
   defaultCondition: "CON",
   defaultPaymentMethod: "008",
   defaultIgvPercent: 18,
-  monthlyFee: null
+  monthlyFee: null,
+  hasPlame: false,
+  salesAccount: "",
+  purchasesAccount: ""
 };
 
 export const importFields: Array<{
@@ -94,5 +100,8 @@ export const importFields: Array<{
   { key: "defaultCondition", label: "Condicion por defecto" },
   { key: "defaultPaymentMethod", label: "Medio de pago por defecto" },
   { key: "defaultIgvPercent", label: "IGV por defecto" },
-  { key: "monthlyFee", label: "Honorarios mensuales" }
+  { key: "monthlyFee", label: "Honorarios mensuales" },
+  { key: "hasPlame", label: "Declara PLAME" },
+  { key: "salesAccount", label: "Cuenta de Ventas" },
+  { key: "purchasesAccount", label: "Cuenta de Compras" }
 ];

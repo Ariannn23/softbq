@@ -5,7 +5,8 @@ import {
   createPaymentController,
   generateMonthlyChargesController,
   listChargesController,
-  getClientBillingHistoryController
+  getClientBillingHistoryController,
+  updateAmountController
 } from "./billing.controller.js";
 
 export async function billingRoutes(fastify: FastifyInstance) {
@@ -16,4 +17,5 @@ export async function billingRoutes(fastify: FastifyInstance) {
   fastify.post("/charges", createChargeController);
   fastify.post("/charges/generate-monthly", generateMonthlyChargesController);
   fastify.post("/charges/:chargeId/payments", createPaymentController);
+  fastify.put("/charges/:chargeId/amount", updateAmountController);
 }

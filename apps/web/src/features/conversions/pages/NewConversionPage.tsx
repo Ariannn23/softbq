@@ -80,7 +80,7 @@ export function NewConversionPage() {
       });
 
       // Navigate to preview page with the validation data
-      navigate("/conversiones/preview", { state: { validation: response } });
+      navigate("/conversions/preview", { state: { validation: response } });
     } catch (err: any) {
       setError(err.message || "Error validando los archivos.");
       setIsSubmitting(false);
@@ -182,7 +182,7 @@ export function NewConversionPage() {
         <div className="bg-slate-50 px-6 py-4 flex justify-between items-center border-t border-slate-200">
           <button
             type="button"
-            onClick={() => navigate("/conversiones")}
+            onClick={() => navigate("/conversions")}
             className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Cancelar

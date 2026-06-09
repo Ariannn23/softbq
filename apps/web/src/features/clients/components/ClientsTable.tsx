@@ -1,4 +1,4 @@
-import { Ban, Pencil, UserCheck, XCircle } from "lucide-react";
+import { Ban, Pencil, UserCheck, XCircle, Eye } from "lucide-react";
 
 import type { Client, SessionUser } from "../../shared/types";
 import { IconButton, StatusPill, TableRowsSkeleton } from "../../shared/ui";
@@ -8,12 +8,14 @@ export function ClientsTable({
   loading,
   onEdit,
   onToggleClient,
+  onView,
   user
 }: {
   clients: Client[];
   loading: boolean;
   onEdit: (client: Client) => void;
   onToggleClient: (client: Client, action: "disable" | "enable") => void;
+  onView: (client: Client) => void;
   user: SessionUser;
 }) {
   return (
@@ -27,17 +29,15 @@ export function ClientsTable({
             <th className="px-5 py-4">Estado</th>
             <th className="px-5 py-4">Codigo entidad Contasis</th>
             <th className="px-5 py-4">Descripcion entidad Contasis</th>
-            <th className="px-5 py-4">Condicion por defecto</th>
-            <th className="px-5 py-4">Medio de pago por defecto</th>
             <th className="px-5 py-4">IGV por defecto</th>
             <th className="px-5 py-4 text-right">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {loading ? <TableRowsSkeleton columns={10} rows={10} /> : null}
+          {loading ? <TableRowsSkeleton columns={8} rows={10} /> : null}
           {!loading && clients.length === 0 ? (
             <tr>
-              <td className="px-5 py-8 text-[#53698d]" colSpan={10}>No hay clientes registrados.</td>
+              <td className="px-5 py-8 text-[#53698d]" colSpan={8}>No hay clientes registrados.</td>
             </tr>
           ) : null}
           {!loading
@@ -49,18 +49,17 @@ export function ClientsTable({
                   <td className="px-5 py-4"><StatusPill label={client.active ? "Activo" : "Inactivo"} tone={client.active ? "green" : "gray"} /></td>
                   <td className="px-5 py-4">{client.contasisEntityCode}</td>
                   <td className="px-5 py-4">{client.contasisEntityDescription}</td>
-                  <td className="px-5 py-4">{client.defaultCondition}</td>
-                  <td className="px-5 py-4">{client.defaultPaymentMethod}</td>
                   <td className="px-5 py-4">{client.defaultIgvPercent}%</td>
                   <td className="px-5 py-4">
                     <div className="flex justify-end gap-2">
+                      <IconButton disabled={!client.active} icon={Eye} label="Ver detalles" onClick={() => onView(client)} tone="purple" />
                       <IconButton disabled={!client.active} icon={Pencil} label="Editar" onClick={() => onEdit(client)} tone="blue" />
-                      {client.active ? (
-                        <IconButton icon={Ban} label="Inhabilitar" onClick={() => onToggleClient(client, "disable")} tone="red" />
-                      ) : user.role === "admin" ? (
-                        <IconButton icon={UserCheck} label="Habilitar" onClick={() => onToggleClient(client, "enable")} tone="green" />
-                      ) : (
-                        <IconButton disabled icon={XCircle} label="Inactivo" tone="gray" />
+                      {user.role === "admin" && (
+                        client.active ? (
+                          <IconButton icon={Ban} label="Inhabilitar" onClick={() => onToggleClient(client, "disable")} tone="red" />
+                        ) : (
+                          <IconButton icon={UserCheck} label="Habilitar" onClick={() => onToggleClient(client, "enable")} tone="green" />
+                        )
                       )}
                     </div>
                   </td>

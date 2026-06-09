@@ -29,7 +29,7 @@ export function ValidationPreviewPage() {
           size: validation.purchases.sizeBytes,
         } : undefined,
       });
-      navigate(`/conversiones/resultado/${res.conversionId}`, { state: { result: res } });
+      navigate(`/conversions/result/${res.conversionId}`, { state: { result: res } });
     } catch (err: any) {
       setError(err.message || "Error al generar la conversión");
     } finally {
@@ -42,7 +42,7 @@ export function ValidationPreviewPage() {
       <div className="p-6 max-w-5xl mx-auto text-center">
         <h2 className="text-xl font-bold text-slate-800">No hay datos de validación</h2>
         <button
-          onClick={() => navigate("/conversiones/nueva")}
+          onClick={() => navigate("/conversions/new")}
           className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md"
         >
           Volver
@@ -94,13 +94,13 @@ export function ValidationPreviewPage() {
       <div className="bg-white px-6 py-4 flex justify-between items-center border border-slate-200 rounded-lg shadow-sm">
         <div className="flex gap-4">
           <button
-            onClick={() => navigate("/conversiones/nueva")}
+            onClick={() => navigate("/conversions/new")}
             className="px-6 py-2 border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 rounded-lg font-medium transition-colors"
           >
             Volver
           </button>
           <button
-            onClick={() => navigate("/conversiones")}
+            onClick={() => navigate("/conversions")}
             className="px-6 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg font-medium transition-colors"
           >
             Cancelar

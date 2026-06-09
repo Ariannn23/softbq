@@ -13,7 +13,7 @@ export function ConversionResultPage() {
       <div className="p-6 max-w-5xl mx-auto text-center">
         <h2 className="text-xl font-bold text-slate-800">No hay datos de la conversión</h2>
         <button
-          onClick={() => navigate("/conversiones")}
+          onClick={() => navigate("/conversions")}
           className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md"
         >
           Volver a Conversiones
@@ -30,7 +30,7 @@ export function ConversionResultPage() {
     <div className="p-6 max-w-6xl mx-auto space-y-8">
       <div>
         <div className="flex items-center gap-2 text-sm text-blue-600 mb-2">
-          <button onClick={() => navigate("/conversiones")} className="hover:underline">Conversiones</button>
+          <button onClick={() => navigate("/conversions")} className="hover:underline">Conversiones</button>
           <span className="text-slate-400">/</span>
           <span className="text-slate-600">Resultado de conversión</span>
         </div>
@@ -94,14 +94,14 @@ export function ConversionResultPage() {
 
       <div className="bg-white px-6 py-4 flex justify-between items-center border border-slate-200 rounded-lg shadow-sm">
         <button
-          onClick={() => navigate("/conversiones/nueva")}
+          onClick={() => navigate("/conversions/new")}
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50"
         >
           <ArrowLeft className="w-4 h-4" />
           Nueva conversión
         </button>
         <button
-          onClick={() => navigate("/conversiones")}
+          onClick={() => navigate("/conversions")}
           className="flex items-center gap-2 px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
         >
           Volver a Conversiones

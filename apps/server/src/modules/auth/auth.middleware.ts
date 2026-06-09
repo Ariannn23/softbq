@@ -12,3 +12,9 @@ export async function requireAuth(request: FastifyRequest, reply: FastifyReply) 
 
   request.user = session.user;
 }
+
+export async function requireAdmin(request: FastifyRequest, reply: FastifyReply) {
+  if (request.user?.role !== "admin") {
+    return reply.code(403).send({ message: "Acceso denegado. Se requiere rol de administrador." });
+  }
+}

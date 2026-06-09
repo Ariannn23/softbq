@@ -1,20 +1,28 @@
-import { BarChart3, ChevronDown, CircleDollarSign, FileSpreadsheet, Files, HelpCircle, Home, Laptop, LogOut, Menu, Settings, User, Users } from "lucide-react";
+import { useState } from "react";
+import { Toaster } from "react-hot-toast";
+import { BarChart3, ChevronLeft, ChevronRight, CircleDollarSign, FileSpreadsheet, Files, Home, Laptop, LogOut, Settings, User, Users } from "lucide-react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
 import type { SessionUser } from "../shared/types";
 import { BrandMark } from "../shared/ui";
 
-const navItems = [
-  { path: "/dashboard", label: "Panel Principal", icon: Home, enabled: true },
-  { path: "/conversiones", label: "Conversiones", icon: FileSpreadsheet, enabled: true },
-  { path: "/clientes", label: "Clientes", icon: Users, enabled: true },
-  { path: "/billing", label: "Cobranzas", icon: CircleDollarSign, enabled: true },
-  { path: "/archivos-generados", label: "Archivos Generados", icon: Files, enabled: false },
-  { path: "/reportes", label: "Reportes", icon: BarChart3, enabled: false },
-  { path: "/configuracion", label: "Configuracion", icon: Settings, enabled: false },
-  { path: "/usuarios", label: "Usuarios", icon: User, enabled: false },
-  { path: "/logs", label: "Logs del Sistema", icon: FileSpreadsheet, enabled: false }
-];
+const getNavItems = (role: string) => {
+  const items = [
+    { path: "/dashboard", label: "Panel Principal", icon: Home, enabled: true },
+    { path: "/conversions", label: "Conversiones", icon: FileSpreadsheet, enabled: true },
+    { path: "/clients", label: "Clientes", icon: Users, enabled: true },
+    { path: "/billing", label: "Cobranzas", icon: CircleDollarSign, enabled: true },
+  ];
+
+  if (role === "admin") {
+    items.push(
+      { path: "/settings", label: "Configuración", icon: Settings, enabled: true },
+      { path: "/usuarios", label: "Usuarios", icon: User, enabled: false }
+    );
+  }
+
+  return items;
+};
 
 export function AppLayout({
   onLogout,
@@ -24,63 +32,77 @@ export function AppLayout({
   user: SessionUser;
 }) {
   const location = useLocation();
+  const [isCompact, setIsCompact] = useState(false);
 
   return (
     <main className="min-h-screen bg-[#f5faff] text-[#072d4a]">
-      <aside className="fixed inset-y-0 left-0 hidden w-[270px] bg-gradient-to-b from-[#0aa0ed] via-[#055687] to-[#072d4a] text-white lg:flex lg:flex-col">
-        <div className="px-7 py-8">
-          <BrandMark size="md" />
-          <p className="ml-[58px] mt-1 text-sm leading-5 text-white/90">Conversion contable<br />TXT a Excel</p>
+      <Toaster position="top-right" />
+      {/* Sidebar */}
+      <aside 
+        className={`fixed inset-y-0 left-0 hidden bg-gradient-to-b from-[#0aa0ed] via-[#055687] to-[#072d4a] text-white lg:flex lg:flex-col transition-all duration-300 ease-in-out z-20 ${isCompact ? "w-[88px]" : "w-[270px]"}`}
+      >
+        <button 
+          onClick={() => setIsCompact(!isCompact)}
+          className="absolute -right-4 top-[17px] flex h-8 w-8 items-center justify-center rounded-full border border-[#d8e8f6] bg-white text-[#056ba6] shadow-sm hover:bg-slate-50 transition-colors z-30"
+          type="button"
+          title={isCompact ? "Expandir panel" : "Contraer panel"}
+        >
+          {isCompact ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+        </button>
+
+        <div className={`px-7 py-8 transition-all duration-300 ${isCompact ? "flex justify-center px-0" : ""}`}>
+          <BrandMark size="md" iconOnly={isCompact} />
+          {!isCompact && <p className="ml-[58px] mt-1 text-sm leading-5 text-white/90 whitespace-nowrap overflow-hidden">Software Contable</p>}
         </div>
 
-        <nav className="mt-4 flex-1 space-y-2 px-4">
-          {navItems.map((item) => {
+        <nav className="mt-4 flex-1 space-y-2 px-4 overflow-hidden">
+          {getNavItems(user.role).map((item) => {
             const Icon = item.icon;
 
             if (!item.enabled) {
               return (
-                <button className="flex h-12 w-full items-center gap-4 rounded-md px-4 text-left text-sm font-medium text-white/90 opacity-60" disabled key={item.path} type="button">
-                  <Icon size={24} />
-                  {item.label}
+                <button className={`flex h-12 items-center rounded-md text-left text-sm font-medium text-white/90 opacity-60 transition-all ${isCompact ? "w-12 justify-center px-0 mx-auto" : "w-full gap-4 px-4"}`} disabled key={item.path} type="button" title={isCompact ? item.label : undefined}>
+                  <Icon size={24} className="shrink-0" />
+                  {!isCompact && <span className="whitespace-nowrap">{item.label}</span>}
                 </button>
               );
             }
 
             return (
               <NavLink
-                className={({ isActive }) => `flex h-12 w-full items-center gap-4 rounded-md px-4 text-left text-sm font-medium transition ${
-                  isActive || (item.path === "/clientes" && location.pathname === "/importar-clientes") || (item.path === "/conversiones/nueva" && location.pathname.startsWith("/conversiones"))
+                className={({ isActive }) => `flex h-12 items-center rounded-md text-left text-sm font-medium transition-all ${isCompact ? "w-12 justify-center px-0 mx-auto" : "w-full gap-4 px-4"} ${
+                  isActive || (item.path === "/clients" && location.pathname === "/clients/import") || (item.path === "/conversions" && location.pathname.startsWith("/conversions"))
                     ? "bg-[#0b8ff0] shadow-lg"
                     : "text-white/90 hover:bg-white/10"
                 }`}
                 key={item.path}
                 to={item.path}
+                title={isCompact ? item.label : undefined}
               >
-                <Icon size={24} />
-                {item.label}
+                <Icon size={24} className="shrink-0" />
+                {!isCompact && <span className="whitespace-nowrap">{item.label}</span>}
               </NavLink>
             );
           })}
         </nav>
 
-        <div className="border-t border-white/20 px-7 py-6">
-          <div className="flex items-center gap-3 text-white/90"><HelpCircle size={26} />Ayuda</div>
-          <p className="mt-8 text-sm leading-6 text-white/85">Version 1.0.0<br />Aplicacion local</p>
+        <div className={`border-t border-white/20 py-6 transition-all ${isCompact ? "px-0 flex justify-center" : "px-7"}`}>
+          <button onClick={onLogout} className={`flex items-center text-white/90 hover:text-white transition-colors ${isCompact ? "justify-center w-12 h-12" : "gap-3 w-full"}`} title="Cerrar sesión">
+            <LogOut size={26} className="shrink-0" />
+            {!isCompact && <span className="font-medium whitespace-nowrap">Cerrar sesión</span>}
+          </button>
         </div>
       </aside>
 
-      <section className="lg:pl-[270px]">
-        <header className="sticky top-0 z-10 flex h-[66px] items-center justify-between border-b border-[#d8e8f6] bg-white/95 px-6 backdrop-blur">
-          <button className="flex h-10 w-10 items-center justify-center rounded-md text-[#072d4a]" type="button"><Menu size={26} /></button>
+      <section className={`transition-all duration-300 ease-in-out ${isCompact ? "lg:pl-[88px]" : "lg:pl-[270px]"}`}>
+        <header className="sticky top-0 z-10 flex h-[66px] items-center justify-end border-b border-[#d8e8f6] bg-white/95 px-6 backdrop-blur">
           <div className="flex items-center gap-5 text-sm">
             <div className="flex items-center gap-2"><Laptop size={24} /><span className="h-2 w-2 rounded-full bg-emerald-500" />LOCAL</div>
             <div className="h-7 w-px bg-[#d8e8f6]" />
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#dff1ff] text-[#007fcb]"><User size={20} /></div>
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#dff1ff] text-[#056ba6]"><User size={20} /></div>
               <span className="font-semibold">{user.role === "admin" ? "Administrador" : "Contador principal"}</span>
-              <ChevronDown size={18} />
             </div>
-            <button className="flex h-10 w-10 items-center justify-center rounded-md border border-[#d8e8f6] text-[#055687]" onClick={onLogout} title="Cerrar sesion" type="button"><LogOut size={18} /></button>
           </div>
         </header>
 

@@ -30,7 +30,7 @@ export function ImportClientsPage({
   return (
     <div className="mx-auto max-w-[1540px] px-7 py-7">
       <div className="text-sm text-[#53698d]">
-        <button className="hover:text-[#007fcb]" onClick={() => navigate("/clientes")} type="button">Clientes</button>
+        <button className="hover:text-[#056ba6]" onClick={() => navigate("/clients")} type="button">Clientes</button>
         <span className="mx-3">{">"}</span>
         <span>Importar clientes</span>
       </div>
@@ -41,12 +41,12 @@ export function ImportClientsPage({
 
       <div className="mt-6 grid gap-3 xl:grid-cols-[330px_minmax(0,1fr)_minmax(0,1fr)]">
         <section className="row-span-2 rounded-lg border border-[#d8e8f6] bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-bold text-[#006eb3]">1. Subir archivo Excel</h2>
+          <h2 className="text-lg font-bold text-[#045585]">1. Subir archivo Excel</h2>
           <label className="mt-5 flex min-h-52 cursor-pointer flex-col items-center justify-center rounded-md border border-dashed border-[#b9d9f9] bg-[#fbfdff] p-6 text-center">
             <FileSpreadsheet className="h-12 w-12 text-emerald-600" />
             <span className="mt-4 font-semibold text-[#26466f]">Arrastra y suelta tu archivo aqui</span>
             <span className="mt-2 text-sm text-[#53698d]">o</span>
-            <span className="mt-4 rounded-md bg-[#007fcb] px-5 py-3 font-semibold text-white">Seleccionar archivo</span>
+            <span className="mt-4 rounded-md bg-[#056ba6] px-5 py-3 font-semibold text-white">Seleccionar archivo</span>
             <input accept=".xlsx" className="hidden" onChange={(event) => void state.handleFileChange(event.target.files?.[0])} type="file" />
           </label>
           {state.fileName ? (
@@ -65,7 +65,7 @@ export function ImportClientsPage({
         </section>
 
         <section className="rounded-lg border border-[#d8e8f6] bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-bold text-[#006eb3]">2. Seleccionar hoja</h2>
+          <h2 className="text-lg font-bold text-[#045585]">2. Seleccionar hoja</h2>
           <p className="mt-4 text-sm text-[#53698d]">Hojas detectadas en el archivo:</p>
           {state.busy && !state.analysis ? <SkeletonLine className="mt-4 h-11 w-full" /> : (
             <select className="mt-4 h-11 w-full rounded-md border border-[#c9dbef] px-3 outline-none" disabled={!state.analysis} onChange={(event) => state.setSelectedSheet(event.target.value)} value={state.selectedSheet}>
@@ -76,7 +76,7 @@ export function ImportClientsPage({
         </section>
 
         <section className="rounded-lg border border-[#d8e8f6] bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-bold text-[#006eb3]">3. Columnas detectadas</h2>
+          <h2 className="text-lg font-bold text-[#045585]">3. Columnas detectadas</h2>
           <p className="mt-4 text-sm text-[#53698d]">Se detectaron {state.headers.length} columnas en la hoja seleccionada.</p>
           <div className="mt-5 flex flex-wrap gap-2">
             {state.busy && !state.analysis
@@ -87,7 +87,7 @@ export function ImportClientsPage({
         </section>
 
         <section className="rounded-lg border border-[#d8e8f6] bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-bold text-[#006eb3]">4. Mapear columnas a campos de SOFTBQ</h2>
+          <h2 className="text-lg font-bold text-[#045585]">4. Mapear columnas a campos de SOFTBQ</h2>
           <div className="mt-5 space-y-3">
             {state.busy && !state.analysis
               ? Array.from({ length: 8 }, (_, index) => <div className="grid grid-cols-[1fr_24px_1fr] items-center gap-3" key={index}><SkeletonLine className="h-5 w-full" /><span className="text-center text-[#53698d]">{"->"}</span><SkeletonLine className="h-9 w-full" /></div>)
@@ -106,7 +106,7 @@ export function ImportClientsPage({
         </section>
 
         <section className="rounded-lg border border-[#d8e8f6] bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-bold text-[#006eb3]">5. Vista previa de datos</h2>
+          <h2 className="text-lg font-bold text-[#045585]">5. Vista previa de datos</h2>
           <p className="mt-3 text-sm text-[#53698d]">Se muestran las primeras 5 filas con el mapeo aplicado.</p>
           <div className="mt-5 overflow-x-auto">
             <ImportPreviewTable busy={state.busy} hasAnalysis={Boolean(state.analysis)} preview={state.preview} />
@@ -117,16 +117,16 @@ export function ImportClientsPage({
 
       <section className="mt-3 grid gap-3 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
         <div className="rounded-lg border border-[#d8e8f6] bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-bold text-[#006eb3]">6. Confirmar importacion</h2>
+          <h2 className="text-lg font-bold text-[#045585]">6. Confirmar importacion</h2>
           <div className="mt-5 rounded-md border border-[#9ed8ff] bg-[#f0f9ff] p-4 text-sm leading-6 text-[#072d4a]">Se importaran {state.preview?.validRows ?? 0} filas con el mapeo configurado.<br />Por favor verifica la vista previa antes de continuar.</div>
           <div className="mt-12 flex flex-wrap gap-4">
-            <button className="h-11 rounded-md border border-[#c9dbef] px-8 font-semibold" onClick={() => navigate("/clientes")} type="button">Cancelar</button>
-            <button className="h-11 rounded-md bg-[#007fcb] px-8 font-semibold text-white disabled:opacity-60" disabled={!state.preview || state.preview.validRows === 0 || state.busy} onClick={() => void state.confirmImport()} type="button">Confirmar importacion</button>
+            <button className="h-11 rounded-md border border-[#c9dbef] px-8 font-semibold" onClick={() => navigate("/clients")} type="button">Cancelar</button>
+            <button className="h-11 rounded-md bg-[#056ba6] px-8 font-semibold text-white disabled:opacity-60" disabled={!state.preview || state.preview.validRows === 0 || state.busy} onClick={() => void state.confirmImport()} type="button">Confirmar importacion</button>
           </div>
           {state.message ? <p className="mt-4 text-sm text-red-600">{state.message}</p> : null}
         </div>
         <div className="rounded-lg border border-[#d8e8f6] bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-bold text-[#006eb3]">7. Resumen de la importacion</h2>
+          <h2 className="text-lg font-bold text-[#045585]">7. Resumen de la importacion</h2>
           <p className="mt-3 text-sm text-[#53698d]">{state.summary ? "La importacion se completo correctamente." : "El resumen aparecera despues de confirmar."}</p>
           <div className="mt-6 grid gap-4 md:grid-cols-4">
             <ImportSummaryCard label="Creados" value={state.summary?.created ?? 0} tone="green" />

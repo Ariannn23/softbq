@@ -1,6 +1,6 @@
 import { db } from "@softbq/db";
 import { billingCharges, billingPayments, clients } from "@softbq/db";
-import { eq, and, sql, desc } from "drizzle-orm";
+import { eq, and, sql, desc, asc } from "drizzle-orm";
 
 export async function getBillingCharges(period?: string) {
   const query = db
@@ -97,6 +97,21 @@ export async function updateBillingChargeStatus(
   await db
     .update(billingCharges)
     .set({
+      status,
+      updatedAt: new Date().toISOString()
+    })
+    .where(eq(billingCharges.id, chargeId));
+}
+
+export async function updateBillingChargeTotalAmount(
+  chargeId: number,
+  totalAmount: number,
+  status: "pendiente" | "parcial" | "pagado"
+) {
+  await db
+    .update(billingCharges)
+    .set({
+      totalAmount,
       status,
       updatedAt: new Date().toISOString()
     })

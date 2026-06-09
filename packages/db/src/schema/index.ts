@@ -47,6 +47,9 @@ export const clients = sqliteTable(
     defaultPaymentMethod: text("default_payment_method").notNull().default("008"),
     defaultIgvPercent: real("default_igv_percent").notNull().default(18),
     monthlyFee: real("monthly_fee"),
+    hasPlame: integer("has_plame", { mode: "boolean" }).notNull().default(false),
+    salesAccount: text("sales_account").notNull().default(""),
+    purchasesAccount: text("purchases_account").notNull().default(""),
     createdAt: text("created_at").notNull().default(currentTimestamp),
     updatedAt: text("updated_at").notNull().default(currentTimestamp)
   },

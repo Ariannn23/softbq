@@ -29,6 +29,9 @@ export type ClientInput = {
   defaultPaymentMethod: string;
   defaultIgvPercent: number;
   monthlyFee?: number | null;
+  hasPlame?: boolean;
+  salesAccount?: string;
+  purchasesAccount?: string;
 };
 
 function ensureClientPermission(user: AuthenticatedUser | undefined) {
@@ -68,6 +71,9 @@ function toClient(record: Awaited<ReturnType<typeof findClientById>>): Client {
     defaultPaymentMethod: record.defaultPaymentMethod,
     defaultIgvPercent: record.defaultIgvPercent,
     monthlyFee: record.monthlyFee,
+    hasPlame: record.hasPlame,
+    salesAccount: record.salesAccount,
+    purchasesAccount: record.purchasesAccount,
     createdAt: record.createdAt,
     updatedAt: record.updatedAt
   };
@@ -83,7 +89,10 @@ function normalizeClientInput(input: ClientInput): ClientInput {
     defaultCondition: input.defaultCondition.trim(),
     defaultPaymentMethod: input.defaultPaymentMethod.trim(),
     defaultIgvPercent: input.defaultIgvPercent,
-    monthlyFee: input.monthlyFee ?? null
+    monthlyFee: input.monthlyFee ?? null,
+    hasPlame: input.hasPlame ?? false,
+    salesAccount: input.salesAccount?.trim() ?? "",
+    purchasesAccount: input.purchasesAccount?.trim() ?? ""
   };
 }
 

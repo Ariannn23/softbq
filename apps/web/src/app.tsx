@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter, Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 
 import { LoginPage, LoginSkeleton } from "./features/auth/LoginPage";
 import { ClientsPage } from "./features/clients/ClientsPage";
@@ -12,6 +13,7 @@ import { ValidationPreviewPage } from "./features/conversions/pages/ValidationPr
 import { ConversionResultPage } from "./features/conversions/pages/ConversionResultPage";
 import { BillingPage } from "./features/billing/pages/BillingPage";
 import { BillingHistoryPage } from "./features/billing/pages/BillingHistoryPage";
+import { SettingsPage } from "./features/settings/pages/SettingsPage";
 import type { LoginValues, SessionUser } from "./features/shared/types";
 import { fetchSession, login, logout } from "./features/auth/services/authApi";
 
@@ -65,7 +67,7 @@ function AppRoutes() {
         <Route index element={<Navigate replace to="/dashboard" />} />
         <Route path="/dashboard" element={<DashboardPage clientsVersion={clientsVersion} />} />
         <Route
-          path="/clientes"
+          path="/clients"
           element={
             <ClientsPage
               onClientsChanged={() => setClientsVersion((version) => version + 1)}
@@ -74,7 +76,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/importar-clientes"
+          path="/clients/import"
           element={
             <ImportClientsPage
               onClientsChanged={() => setClientsVersion((version) => version + 1)}
@@ -82,12 +84,13 @@ function AppRoutes() {
             />
           }
         />
-        <Route path="/conversiones" element={<ConversionsPage />} />
-        <Route path="/conversiones/nueva" element={<NewConversionPage />} />
-        <Route path="/conversiones/preview" element={<ValidationPreviewPage />} />
-        <Route path="/conversiones/resultado/:id" element={<ConversionResultPage />} />
+        <Route path="/conversions" element={<ConversionsPage />} />
+        <Route path="/conversions/new" element={<NewConversionPage />} />
+        <Route path="/conversions/preview" element={<ValidationPreviewPage />} />
+        <Route path="/conversions/result/:id" element={<ConversionResultPage />} />
         <Route path="/billing" element={<BillingPage />} />
         <Route path="/billing/history" element={<BillingHistoryPage />} />
+        <Route path="/settings" element={<SettingsPage user={user} />} />
       </Route>
       <Route path="/login" element={<Navigate replace to="/dashboard" />} />
       <Route path="*" element={<Navigate replace to="/dashboard" />} />
@@ -108,12 +111,15 @@ function LoginRoute({
 
   async function handleLogin(values: LoginValues) {
     setAuthError(null);
+    const toastId = toast.loading("Iniciando sesión...");
 
     try {
       onLogin(await login(values));
+      toast.success("¡Bienvenido a Software Contable!", { id: toastId });
       navigate("/dashboard", { replace: true });
     } catch (error) {
-      setAuthError(error instanceof Error ? error.message : "Usuario o contrasena incorrectos.");
+      toast.error(error instanceof Error ? error.message : "Usuario o contraseña incorrectos.", { id: toastId });
+      setAuthError(error instanceof Error ? error.message : "Usuario o contraseña incorrectos.");
     }
   }
 

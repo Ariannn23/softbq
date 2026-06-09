@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { db, clients, clientPeriods } from "@softbq/db";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, asc } from "drizzle-orm";
 
 export async function getDashboardController(
   request: FastifyRequest,
@@ -19,9 +19,11 @@ export async function getDashboardController(
         id: clients.id,
         ruc: clients.ruc,
         businessName: clients.businessName,
+        hasPlame: clients.hasPlame,
       })
       .from(clients)
-      .where(eq(clients.active, true));
+      .where(eq(clients.active, true))
+      .orderBy(asc(clients.businessName));
 
     // 2. Get client periods for the given period
     const periods = await db
@@ -46,6 +48,7 @@ export async function getDashboardController(
     let totalGenerado = 0;
     let totalRevisado = 0;
     let totalDeclarado = 0;
+    let totalPlameDeclarado = 0;
 
     const list = activeClients.map(c => {
       const status = statusMap.get(c.id) || "pendiente";
@@ -56,6 +59,7 @@ export async function getDashboardController(
       else if (status === "generado") totalGenerado++;
       else if (status === "revisado") totalRevisado++;
       else if (status === "declarado") totalDeclarado++;
+      else if (status === "plame_declarado") totalPlameDeclarado++;
       
       return {
         ...c,
@@ -71,7 +75,8 @@ export async function getDashboardController(
         comprasCargadas: totalComprasCargadas,
         generado: totalGenerado,
         revisado: totalRevisado,
-        declarado: totalDeclarado
+        declarado: totalDeclarado,
+        plameDeclarado: totalPlameDeclarado
       },
       clients: list
     });

@@ -1,4 +1,4 @@
-import { and, eq, like, ne, or } from "drizzle-orm";
+import { and, eq, like, ne, or, asc } from "drizzle-orm";
 
 import { clients, db } from "@softbq/db";
 
@@ -9,7 +9,7 @@ export async function listClients(search?: string): Promise<ClientRecord[]> {
   const normalizedSearch = search?.trim();
 
   if (!normalizedSearch) {
-    return db.select().from(clients);
+    return db.select().from(clients).orderBy(asc(clients.businessName));
   }
 
   const pattern = `%${normalizedSearch}%`;
@@ -23,7 +23,8 @@ export async function listClients(search?: string): Promise<ClientRecord[]> {
         like(clients.businessName, pattern),
         like(clients.shortName, pattern)
       )
-    );
+    )
+    .orderBy(asc(clients.businessName));
 }
 
 export async function findClientById(id: number): Promise<ClientRecord | null> {

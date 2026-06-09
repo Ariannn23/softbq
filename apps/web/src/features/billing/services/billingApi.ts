@@ -82,10 +82,17 @@ export async function createBillingPayment(
   });
 }
 
-export async function generateMonthlyCharges(period: string): Promise<{ generatedCount: number }> {
+export async function generateMonthlyCharges(period: string): Promise<{ generated: number }> {
   return fetchApi("/api/billing/charges/generate-monthly", {
     method: "POST",
     body: JSON.stringify({ period })
+  });
+}
+
+export async function updateBillingChargeAmount(chargeId: number, amount: number) {
+  return fetchApi(`/api/billing/charges/${chargeId}/amount`, {
+    method: "PUT",
+    body: JSON.stringify({ amount })
   });
 }
 

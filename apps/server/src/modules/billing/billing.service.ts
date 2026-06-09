@@ -7,6 +7,7 @@ import {
   getClientChargeForPeriod,
   getClientsWithMonthlyFee,
   updateBillingChargeStatus,
+  updateBillingChargeTotalAmount,
   getBillingHistoryByClientId
 } from "./billing.repository.js";
 
@@ -160,4 +161,39 @@ export async function getClientBillingHistory(input: { user: AuthenticatedUser |
     },
     charges
   };
+}
+
+export async function updateChargeAmount(input: {
+  user: AuthenticatedUser | undefined;
+  chargeId: number;
+  newAmount: number;
+}) {
+  ensureAuthorizedPermission(input.user);
+
+  if (input.newAmount <= 0) {
+    throw new BillingServiceError("El monto debe ser mayor a 0.", 400);
+  }
+
+  const charge = await getBillingChargeById(input.chargeId);
+  if (!charge) {
+    throw new BillingServiceError("Cargo no encontrado.", 404);
+  }
+
+  const paidAmount = Number(charge.paidAmount);
+  if (input.newAmount < paidAmount) {
+    throw new BillingServiceError(
+      `El nuevo monto no puede ser menor a lo que ya se pagó (S/ ${paidAmount.toFixed(2)}).`,
+      400
+    );
+  }
+
+  let newStatus: "pendiente" | "parcial" | "pagado" = "pendiente";
+  if (paidAmount > 0) {
+    newStatus = "parcial";
+  }
+  if (input.newAmount === paidAmount) {
+    newStatus = "pagado";
+  }
+
+  await updateBillingChargeTotalAmount(input.chargeId, input.newAmount, newStatus);
 }
