@@ -6,6 +6,7 @@ import { ClientsPage } from "./features/clients/ClientsPage";
 import { ImportClientsPage } from "./features/clients/ImportClientsPage";
 import { DashboardPage } from "./features/dashboard/DashboardPage";
 import { AppLayout } from "./features/layout/AppLayout";
+import { ConversionsPage } from "./features/conversions/pages/ConversionsPage";
 import { NewConversionPage } from "./features/conversions/pages/NewConversionPage";
 import { ValidationPreviewPage } from "./features/conversions/pages/ValidationPreviewPage";
 import { ConversionResultPage } from "./features/conversions/pages/ConversionResultPage";
@@ -79,6 +80,7 @@ function AppRoutes() {
             />
           }
         />
+        <Route path="/conversiones" element={<ConversionsPage />} />
         <Route path="/conversiones/nueva" element={<NewConversionPage />} />
         <Route path="/conversiones/preview" element={<ValidationPreviewPage />} />
         <Route path="/conversiones/resultado/:id" element={<ConversionResultPage />} />

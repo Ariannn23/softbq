@@ -201,3 +201,121 @@ export async function downloadConversionFileController(
     return reply.code(500).send({ message: "Error al leer el archivo físico" });
   }
 }
+
+export async function getConversionsController(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  const { db, conversions, clients, users, conversionFiles } = await import("@softbq/db");
+  const { eq, and, desc, count, sql } = await import("drizzle-orm");
+
+  const query = request.query as any;
+  const page = parseInt(query.page || "1", 10);
+  const limit = parseInt(query.limit || "10", 10);
+  const offset = (page - 1) * limit;
+
+  let dbQuery = db
+    .select({
+      id: conversions.id,
+      createdAt: conversions.createdAt,
+      status: conversions.status,
+      period: conversions.period,
+      salesRecordsCount: conversions.salesRecordsCount,
+      purchasesRecordsCount: conversions.purchasesRecordsCount,
+      salesStatus: conversions.salesStatus,
+      purchasesStatus: conversions.purchasesStatus,
+      clientName: clients.businessName,
+      clientRuc: clients.ruc,
+      userName: users.username,
+    })
+    .from(conversions)
+    .innerJoin(clients, eq(conversions.clientId, clients.id))
+    .innerJoin(users, eq(conversions.createdBy, users.id));
+
+  const conditions = [];
+
+  if (query.period) {
+    conditions.push(eq(conversions.period, query.period));
+  }
+  if (query.clientId && query.clientId !== "all") {
+    conditions.push(eq(conversions.clientId, Number(query.clientId)));
+  }
+  if (query.status && query.status !== "all") {
+    conditions.push(eq(conversions.status, query.status));
+  }
+  if (query.fileType === "sales") {
+    conditions.push(sql`${conversions.salesRecordsCount} > 0`);
+  } else if (query.fileType === "purchases") {
+    conditions.push(sql`${conversions.purchasesRecordsCount} > 0`);
+  }
+
+  const finalCondition = conditions.length > 0 ? and(...conditions) : undefined;
+
+  const results = await dbQuery
+    .where(finalCondition)
+    .orderBy(desc(conversions.createdAt))
+    .limit(limit)
+    .offset(offset);
+
+  const countResult = await db
+    .select({ totalCount: count() })
+    .from(conversions)
+    .innerJoin(clients, eq(conversions.clientId, clients.id))
+    .innerJoin(users, eq(conversions.createdBy, users.id))
+    .where(finalCondition);
+
+  const totalCount = countResult[0]?.totalCount || 0;
+
+  const conversionIds = results.map((r) => r.id);
+  let filesMap = new Map();
+
+  if (conversionIds.length > 0) {
+    const files = await db
+      .select()
+      .from(conversionFiles)
+      .where(sql`${conversionFiles.conversionId} IN ${conversionIds}`);
+
+    for (const f of files) {
+      if (!filesMap.has(f.conversionId)) {
+        filesMap.set(f.conversionId, []);
+      }
+      let sizeKb = 0;
+      if (f.outputPath) {
+        try {
+          const stats = await fs.stat(f.outputPath);
+          sizeKb = Math.round(stats.size / 1024);
+        } catch (e) {}
+      }
+      filesMap.get(f.conversionId).push({
+        id: f.id,
+        type: f.fileType,
+        status: f.status,
+        sizeKb,
+      });
+    }
+  }
+
+  const mappedResults = results.map((r) => {
+    const cFiles = filesMap.get(r.id) || [];
+    const salesFile = cFiles.find((f: any) => f.type === "sales");
+    const purchasesFile = cFiles.find((f: any) => f.type === "purchases");
+
+    return {
+      ...r,
+      files: {
+        sales: salesFile ? { id: salesFile.id, status: salesFile.status, sizeKb: salesFile.sizeKb } : null,
+        purchases: purchasesFile ? { id: purchasesFile.id, status: purchasesFile.status, sizeKb: purchasesFile.sizeKb } : null,
+      }
+    };
+  });
+
+  return reply.send({
+    data: mappedResults,
+    pagination: {
+      total: totalCount,
+      page,
+      limit,
+      totalPages: Math.ceil(totalCount / limit),
+    },
+  });
+}

@@ -36,7 +36,7 @@ async function main() {
             defaultCondition: "CON",
             defaultIgvPercent: 18,
             defaultPaymentMethod: "008",
-            defaultGoodsServicesClassification: "0"
+            defaultGoodsServicesClassification: "1"
           },
           purchases
         });
@@ -60,8 +60,7 @@ async function main() {
             contasisEntityDescription: "MI EMPRESA",
             defaultCondition: "CON",
             defaultIgvPercent: 18,
-            defaultPaymentMethod: "008",
-            defaultGoodsServicesClassification: "0"
+            defaultPaymentMethod: "008"
           },
           sales
         });

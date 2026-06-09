@@ -4,6 +4,7 @@ import {
   validateConversionController,
   generateConversionController,
   downloadConversionFileController,
+  getConversionsController,
 } from "./conversions.controller.js";
 
 export async function conversionsRoutes(app: FastifyInstance) {
@@ -11,5 +12,6 @@ export async function conversionsRoutes(app: FastifyInstance) {
 
   app.post("/validate", validateConversionController);
   app.post("/generate", generateConversionController);
+  app.get("/", getConversionsController);
   app.get("/:id/download/:fileId", downloadConversionFileController);
 }

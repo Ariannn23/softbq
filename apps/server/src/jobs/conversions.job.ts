@@ -182,7 +182,7 @@ export async function processConversionJob(data: ConversionJobData) {
         defaultPaymentMethod: clientData.defaultPaymentMethod,
         defaultIgvPercent: clientData.defaultIgvPercent,
         defaultCondition: clientData.defaultCondition,
-        defaultGoodsServicesClassification: "0",
+        defaultGoodsServicesClassification: "1",
       };
 
       const mappedRows = mapPurchasesToContasis({

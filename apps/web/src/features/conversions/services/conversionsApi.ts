@@ -75,6 +75,60 @@ export async function validateConversions(data: {
   return res.json();
 }
 
+export type ConversionHistoryItem = {
+  id: number;
+  createdAt: string;
+  status: "draft" | "processing" | "validated" | "completed" | "error" | "cancelled";
+  period: string;
+  salesRecordsCount: number;
+  purchasesRecordsCount: number;
+  salesStatus: "uploaded" | "processing" | "completed" | "error" | null;
+  purchasesStatus: "uploaded" | "processing" | "completed" | "error" | null;
+  clientName: string;
+  clientRuc: string;
+  userName: string;
+  files: {
+    sales: { id: number; status: string; sizeKb: number } | null;
+    purchases: { id: number; status: string; sizeKb: number } | null;
+  };
+};
+
+export type ConversionHistoryResponse = {
+  data: ConversionHistoryItem[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+};
+
+export type GetConversionsParams = {
+  page?: number;
+  limit?: number;
+  period?: string;
+  clientId?: string;
+  status?: string;
+  fileType?: string;
+};
+
+export async function getConversions(params: GetConversionsParams = {}): Promise<ConversionHistoryResponse> {
+  const searchParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== "") {
+      searchParams.append(key, String(value));
+    }
+  });
+
+  const res = await fetch(`/api/conversions?${searchParams.toString()}`);
+
+  if (!res.ok) {
+    throw new Error("Error al cargar el historial de conversiones");
+  }
+
+  return res.json();
+}
+
 export type GenerateConversionPayload = {
   clientId: string;
   period: string;

@@ -6,7 +6,7 @@ import { BrandMark } from "../shared/ui";
 
 const navItems = [
   { path: "/dashboard", label: "Panel Principal", icon: Home, enabled: true },
-  { path: "/conversiones/nueva", label: "Conversiones", icon: FileSpreadsheet, enabled: true },
+  { path: "/conversiones", label: "Conversiones", icon: FileSpreadsheet, enabled: true },
   { path: "/clientes", label: "Clientes", icon: Users, enabled: true },
   { path: "/archivos-generados", label: "Archivos Generados", icon: Files, enabled: false },
   { path: "/reportes", label: "Reportes", icon: BarChart3, enabled: false },
