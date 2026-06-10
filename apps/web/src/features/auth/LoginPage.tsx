@@ -25,7 +25,7 @@ export function LoginPage({
         <div className="relative hidden overflow-hidden bg-gradient-to-br from-[#0aa0ed] via-[#056ba6] to-[#072d4a] p-8 lg:block">
           <div className="relative z-10">
             <BrandMark size="lg" />
-            <p className="mt-4 max-w-xs text-xl leading-7 text-white/95">Software Contable</p>
+            <p className="ml-[80px] mt-2 max-w-xs text-xs font-bold uppercase tracking-[0.2em] text-[#7bd0fe]">Software Contable</p>
           </div>
           <div className="relative z-10 mt-10 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
             <FileCard label="TXT" tone="blue" />
@@ -44,10 +44,7 @@ export function LoginPage({
 
         <div className="flex min-h-full flex-col items-center justify-center bg-[#f6fbff] px-6 py-6">
           <form className="w-full max-w-[420px] rounded-xl border border-[#d8e8f6] bg-white p-6 shadow-[0_18px_42px_rgba(7,45,74,0.18)]" onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="flex justify-center">
-              <BrandMark dark size="md" />
-            </div>
-            <p className="mt-3 text-center text-sm font-medium text-[#40577a]">Software Contable</p>
+            <h2 className="text-center text-3xl font-extrabold text-[#072d4a]">Inicia Sesión</h2>
             <div className="my-6 flex items-center gap-4 text-[#7bd0fe]">
               <div className="h-px flex-1 bg-[#9ed8ff]" />
               <Lock className="h-5 w-5" />

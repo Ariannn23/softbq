@@ -2,6 +2,7 @@ import type { SirePurchaseRecord } from "@softbq/sire";
 
 import type { ContasisPurchaseFieldName } from "../fields/purchaseFields.js";
 import { contasisPurchaseFieldNames } from "../fields/purchaseFields.js";
+import { sanitizeBusinessName } from "../utils/sanitize.js";
 
 export type ContasisPurchaseValue = number | string;
 
@@ -14,6 +15,7 @@ export type ContasisPurchaseClientConfig = {
   defaultGoodsServicesClassification: string;
   defaultIgvPercent: number;
   defaultPaymentMethod: string;
+  purchasesAccount: string;
 };
 
 export type MapPurchasesToContasisInput = {
@@ -46,7 +48,7 @@ function mapPurchaseToContasisRow(
   row.cdesenti = client.contasisEntityDescription;
   row.ctipdoc = purchase.supplierDocumentType;
   row.ccodruc = purchase.supplierDocumentNumber;
-  row.crazsoc = purchase.supplierName;
+  row.crazsoc = sanitizeBusinessName(purchase.supplierName);
   row.ccodclas =
     purchase.goodsServicesClassification || client.defaultGoodsServicesClassification;
   row.nbase1 = purchase.taxableBaseDg;
@@ -72,7 +74,7 @@ function mapPurchaseToContasisRow(
   row.ndolar = purchase.currency === "USD" ? purchase.exchangeRate : "";
   row.ffechaven2 = purchase.issueDate;
   row.ccond = client.defaultCondition;
-  row.cctabase = "";
+  row.cctabase = client.purchasesAccount;
   row.cctaicbper = "";
   row.cctaotrib = "";
   row.cctatot = "";

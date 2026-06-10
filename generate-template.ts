@@ -11,7 +11,7 @@ async function generate() {
     { header: "Codigo entidad Contasis", key: "contasisEntityCode", width: 20 },
     { header: "Descripcion entidad Contasis", key: "contasisEntityDescription", width: 30 },
     { header: "Condicion por defecto", key: "defaultCondition", width: 20 },
-    { header: "Medio de pago por defecto", key: "defaultPaymentMethod", width: 25 },
+    { header: "Código de pago por defecto", key: "defaultPaymentMethod", width: 25 },
     { header: "IGV por defecto", key: "defaultIgvPercent", width: 15 },
     { header: "Honorarios mensuales", key: "monthlyFee", width: 20 },
     { header: "Declara PLAME", key: "hasPlame", width: 15 },

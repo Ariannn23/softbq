@@ -90,6 +90,7 @@ export async function processConversionJob(data: ConversionJobData) {
         defaultPaymentMethod: clientData.defaultPaymentMethod,
         defaultIgvPercent: clientData.defaultIgvPercent,
         defaultCondition: clientData.defaultCondition,
+        salesAccount: clientData.salesAccount,
       };
 
       const mappedRows = mapSalesToContasis({
@@ -183,6 +184,7 @@ export async function processConversionJob(data: ConversionJobData) {
         defaultIgvPercent: clientData.defaultIgvPercent,
         defaultCondition: clientData.defaultCondition,
         defaultGoodsServicesClassification: "1",
+        purchasesAccount: clientData.purchasesAccount,
       };
 
       const mappedRows = mapPurchasesToContasis({

@@ -87,7 +87,7 @@ export function ImportClientsPage({
         </section>
 
         <section className="rounded-lg border border-[#d8e8f6] bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-bold text-[#045585]">4. Mapear columnas a campos de SOFTBQ</h2>
+          <h2 className="text-lg font-bold text-[#045585]">4. Mapear columnas a campos de GRUPO BQ</h2>
           <div className="mt-5 space-y-3">
             {state.busy && !state.analysis
               ? Array.from({ length: 8 }, (_, index) => <div className="grid grid-cols-[1fr_24px_1fr] items-center gap-3" key={index}><SkeletonLine className="h-5 w-full" /><span className="text-center text-[#53698d]">{"->"}</span><SkeletonLine className="h-9 w-full" /></div>)

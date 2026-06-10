@@ -27,7 +27,7 @@ export function ClientForm({
         <ClientField form={form} label="Codigo entidad" name="contasisEntityCode" />
         <ClientField form={form} label="Descripcion entidad" name="contasisEntityDescription" />
         <ClientField form={form} label="Condicion" name="defaultCondition" />
-        <ClientField form={form} label="Medio de pago" name="defaultPaymentMethod" />
+        <ClientField form={form} label="Código de pago" name="defaultPaymentMethod" />
         <ClientField form={form} inputMode="decimal" label="IGV" name="defaultIgvPercent" step="0.01" type="number" />
         <ClientField form={form} inputMode="decimal" label="Honorarios" name="monthlyFee" step="0.01" type="number" />
         <ClientField form={form} label="Cuenta de ventas" name="salesAccount" />

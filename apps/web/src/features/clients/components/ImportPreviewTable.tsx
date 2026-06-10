@@ -20,7 +20,7 @@ export function ImportPreviewTable({
           <th className="px-3 py-3">Codigo entidad</th>
           <th className="px-3 py-3">Descripcion entidad</th>
           <th className="px-3 py-3">Condicion</th>
-          <th className="px-3 py-3">Medio de pago</th>
+          <th className="px-3 py-3">Código de pago</th>
           <th className="px-3 py-3">IGV</th>
         </tr>
       </thead>

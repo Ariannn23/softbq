@@ -39,7 +39,7 @@ export function AppLayout({
       <Toaster position="top-right" />
       {/* Sidebar */}
       <aside 
-        className={`fixed inset-y-0 left-0 hidden bg-gradient-to-b from-[#0aa0ed] via-[#055687] to-[#072d4a] text-white lg:flex lg:flex-col transition-all duration-300 ease-in-out z-20 ${isCompact ? "w-[88px]" : "w-[270px]"}`}
+        className={`fixed inset-y-0 left-0 hidden bg-gradient-to-br from-[#0aa0ed] via-[#056ba6] to-[#072d4a] text-white lg:flex lg:flex-col transition-all duration-300 ease-in-out z-20 ${isCompact ? "w-[88px]" : "w-[270px]"}`}
       >
         <button 
           onClick={() => setIsCompact(!isCompact)}
@@ -50,9 +50,13 @@ export function AppLayout({
           {isCompact ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
         </button>
 
-        <div className={`px-7 py-8 transition-all duration-300 ${isCompact ? "flex justify-center px-0" : ""}`}>
+        <div className={`px-7 py-8 transition-all duration-300 ${isCompact ? "flex justify-center px-0" : "flex flex-col"}`}>
           <BrandMark size="md" iconOnly={isCompact} />
-          {!isCompact && <p className="ml-[58px] mt-1 text-sm leading-5 text-white/90 whitespace-nowrap overflow-hidden">Software Contable</p>}
+          {!isCompact && (
+            <p className="ml-[64px] mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#063b5f] whitespace-nowrap overflow-hidden">
+              Software Contable
+            </p>
+          )}
         </div>
 
         <nav className="mt-4 flex-1 space-y-2 px-4 overflow-hidden">
@@ -86,8 +90,8 @@ export function AppLayout({
           })}
         </nav>
 
-        <div className={`border-t border-white/20 py-6 transition-all ${isCompact ? "px-0 flex justify-center" : "px-7"}`}>
-          <button onClick={onLogout} className={`flex items-center text-white/90 hover:text-white transition-colors ${isCompact ? "justify-center w-12 h-12" : "gap-3 w-full"}`} title="Cerrar sesión">
+        <div className={`border-t border-white/20 py-6 transition-all ${isCompact ? "px-0 flex justify-center" : "px-5"}`}>
+          <button onClick={onLogout} className={`flex items-center text-white/90 hover:bg-white/10 hover:text-white rounded-lg transition-colors ${isCompact ? "justify-center w-12 h-12" : "gap-3 w-full p-2"}`} title="Cerrar sesión">
             <LogOut size={26} className="shrink-0" />
             {!isCompact && <span className="font-medium whitespace-nowrap">Cerrar sesión</span>}
           </button>

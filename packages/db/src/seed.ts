@@ -10,33 +10,33 @@ const baseSettings = [
   {
     key: "contasis.currency.pen",
     value: "S",
-    description: "Codigo Contasis para moneda nacional PEN"
+    description: "Codigo Contasis para moneda nacional PEN",
   },
   {
     key: "contasis.currency.usd",
     value: "D",
-    description: "Codigo Contasis para moneda extranjera USD"
+    description: "Codigo Contasis para moneda extranjera USD",
   },
   {
     key: "defaults.condition",
     value: "CON",
-    description: "Condicion por defecto para clientes"
+    description: "Condicion por defecto para clientes",
   },
   {
     key: "defaults.payment_method",
     value: "008",
-    description: "Medio de pago por defecto"
+    description: "Código de pago por defecto",
   },
   {
     key: "defaults.igv_percent",
     value: "18",
-    description: "Porcentaje IGV por defecto"
+    description: "Porcentaje IGV por defecto",
   },
   {
     key: "sire.txt_separator",
     value: "|",
-    description: "Separador por defecto para archivos TXT SIRE"
-  }
+    description: "Separador por defecto para archivos TXT SIRE",
+  },
 ] as const;
 
 async function upsertUser(input: {
@@ -55,7 +55,7 @@ async function upsertUser(input: {
       role: input.role,
       active: true,
       createdAt: timestamp,
-      updatedAt: timestamp
+      updatedAt: timestamp,
     })
     .onConflictDoUpdate({
       target: users.username,
@@ -63,8 +63,8 @@ async function upsertUser(input: {
         passwordHash,
         role: input.role,
         active: true,
-        updatedAt: timestamp
-      }
+        updatedAt: timestamp,
+      },
     });
 }
 
@@ -72,13 +72,13 @@ async function seed() {
   await upsertUser({
     username: "admin",
     password: process.env.SOFTBQ_ADMIN_PASSWORD ?? "admin123",
-    role: "admin"
+    role: "admin",
   });
 
   await upsertUser({
     username: "armando",
     password: process.env.SOFTBQ_ARMANDO_PASSWORD ?? "armando123",
-    role: "principal_accountant"
+    role: "principal_accountant",
   });
 
   for (const setting of baseSettings) {
@@ -86,15 +86,15 @@ async function seed() {
       .insert(settings)
       .values({
         ...setting,
-        updatedAt: now()
+        updatedAt: now(),
       })
       .onConflictDoUpdate({
         target: settings.key,
         set: {
           value: setting.value,
           description: setting.description,
-          updatedAt: now()
-        }
+          updatedAt: now(),
+        },
       });
   }
 
@@ -102,7 +102,7 @@ async function seed() {
     .select({
       username: users.username,
       role: users.role,
-      active: users.active
+      active: users.active,
     })
     .from(users)
     .where(eq(users.active, true));
@@ -110,7 +110,7 @@ async function seed() {
   const seededSettings = await db.select().from(settings);
 
   console.info(
-    `Seed completo: ${seededUsers.length} usuarios activos, ${seededSettings.length} settings.`
+    `Seed completo: ${seededUsers.length} usuarios activos, ${seededSettings.length} settings.`,
   );
 }
 

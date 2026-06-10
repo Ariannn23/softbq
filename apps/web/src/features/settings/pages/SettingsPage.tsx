@@ -120,7 +120,7 @@ export function SettingsPage({ user }: { user: SessionUser }) {
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">
-                Medio de pago por defecto
+                Código de pago por defecto
               </label>
               <input
                 type="text"

@@ -57,7 +57,7 @@ export function ClientDetailsModal({
             <p className="text-slate-800">{client.defaultCondition}</p>
           </div>
           <div>
-            <span className="block text-xs font-semibold uppercase text-slate-500 mb-1">Medio de pago por defecto</span>
+            <span className="block text-xs font-semibold uppercase text-slate-500 mb-1">Código de pago por defecto</span>
             <p className="text-slate-800">{client.defaultPaymentMethod}</p>
           </div>
           <div>

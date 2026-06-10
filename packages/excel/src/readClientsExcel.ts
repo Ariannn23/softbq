@@ -64,7 +64,7 @@ const fieldAliases: Record<ClientImportField, string[]> = {
   contasisEntityCode: ["codigo entidad", "codigo contasis"],
   contasisEntityDescription: ["descripcion entidad", "descripcion contasis"],
   defaultCondition: ["condicion", "condicion por defecto"],
-  defaultPaymentMethod: ["medio de pago", "medio pago", "forma de pago"],
+  defaultPaymentMethod: ["medio de pago", "medio pago", "forma de pago", "codigo de pago", "codigo pago"],
   defaultIgvPercent: ["igv", "igv por defecto", "porcentaje igv"],
   monthlyFee: ["honorarios", "honorario", "honorarios mensuales", "pago mensual"],
   hasPlame: ["tiene plame", "plame", "declara plame"],
@@ -225,7 +225,7 @@ function buildClientRow(input: {
     contasisEntityDescription:
       readMappedCell(input, "contasisEntityDescription") || "MI ORGANIZACION",
     defaultCondition: readMappedCell(input, "defaultCondition") || "CON",
-    defaultPaymentMethod: readMappedCell(input, "defaultPaymentMethod") || "008",
+    defaultPaymentMethod: (readMappedCell(input, "defaultPaymentMethod") || "008").padStart(3, "0"),
     defaultIgvPercent: parseIgv(readMappedCell(input, "defaultIgvPercent")),
     monthlyFee: parseMonthlyFee(readMappedCell(input, "monthlyFee")),
     hasPlame: readMappedCell(input, "hasPlame").toUpperCase() === "SI" || readMappedCell(input, "hasPlame").toUpperCase() === "SÍ" || readMappedCell(input, "hasPlame") === "1",

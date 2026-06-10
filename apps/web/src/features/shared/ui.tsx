@@ -15,13 +15,13 @@ export function BrandMark({
 
   return (
     <div className="flex items-center gap-4">
-      <div className={`${markSize} flex shrink-0 items-center justify-center rounded-2xl ${dark ? "bg-[#0aa0ed] text-white" : "bg-white text-[#0aa0ed]"} font-black`}>
-        S
+      <div className={`${markSize} flex shrink-0 items-center justify-center overflow-hidden rounded-2xl`}>
+        <img src="/images/icono.png" alt="Grupo BQ Logo" className="h-full w-full object-contain" />
       </div>
       {!iconOnly && (
-        <span className={`${wordSize} font-black tracking-wide ${dark ? "text-[#072d4a]" : "text-white"}`}>
-          SOFT<span className={dark ? "text-[#0aa0ed]" : "text-white"}>BQ</span>
-        </span>
+        <div className={`flex items-center justify-center overflow-hidden ${size === "xl" ? "h-16" : size === "lg" ? "h-12" : "h-8"}`}>
+          <img src="/images/logo2.png" alt="Grupo BQ" className="h-full object-contain" />
+        </div>
       )}
     </div>
   );

@@ -2,6 +2,7 @@ import type { SireSalesRecord } from "@softbq/sire";
 
 import type { ContasisSalesFieldName } from "../fields/salesFields.js";
 import { contasisSalesFieldNames } from "../fields/salesFields.js";
+import { sanitizeBusinessName } from "../utils/sanitize.js";
 
 export type ContasisSalesValue = number | string;
 
@@ -13,6 +14,7 @@ export type ContasisSalesClientConfig = {
   defaultCondition: string;
   defaultIgvPercent: number;
   defaultPaymentMethod: string;
+  salesAccount: string;
 };
 
 export type MapSalesToContasisInput = {
@@ -39,7 +41,7 @@ function mapSaleToContasisRow(
   row.cdesenti = client.contasisEntityDescription;
   row.ctipdoc = sale.customerDocumentType;
   row.ccodruc = sale.customerDocumentNumber;
-  row.crazsoc = sale.customerName;
+  row.crazsoc = sanitizeBusinessName(sale.customerName);
   row.nbase2 = sale.exportValue;
   row.nbase1 = sale.taxableBase;
   row.nexo = sale.exemptAmount;
@@ -60,10 +62,10 @@ function mapSaleToContasisRow(
   row.ccond = client.defaultCondition;
   row.ccodcos = "";
   row.ccodcos2 = "";
-  row.cctabase = "";
+  row.cctabase = client.salesAccount;
   row.cctaicbper = "";
   row.cctaotrib = "";
-  row.cctatot = "";
+  row.cctatot = "1212";
   row.nresp = "";
   row.nporre = "";
   row.nimpres = "";

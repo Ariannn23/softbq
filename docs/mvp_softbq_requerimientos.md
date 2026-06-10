@@ -136,7 +136,7 @@ Cada empresa debe tener como minimo:
 - Codigo de entidad Contasis.
 - Descripcion de entidad Contasis.
 - Condicion por defecto.
-- Medio de pago por defecto.
+- Código de pago por defecto.
 - Porcentaje IGV por defecto.
 
 Valores sugeridos iniciales:
@@ -488,7 +488,7 @@ Debe mostrar:
 Configuraciones generales:
 
 - Condicion por defecto: `CON`
-- Medio de pago por defecto: `008`
+- Código de pago por defecto: `008`
 - IGV por defecto: `18`
 - Moneda nacional Contasis: `S`
 - Moneda extranjera Contasis: `D`
@@ -790,7 +790,7 @@ Campos:
 - Codigo entidad Contasis.
 - Descripcion entidad Contasis.
 - Condicion por defecto.
-- Medio de pago por defecto.
+- Código de pago por defecto.
 - IGV por defecto.
 
 ### 28.4 Importar Clientes
@@ -913,7 +913,7 @@ Parametros:
 - Moneda soles Contasis: `S`.
 - Moneda dolares Contasis: `D`.
 - Condicion por defecto: `CON`.
-- Medio de pago por defecto: `008`.
+- Código de pago por defecto: `008`.
 - IGV por defecto: `18`.
 - Carpeta de salida.
 - Formato de nombre de archivos.

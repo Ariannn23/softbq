@@ -115,7 +115,7 @@ function LoginRoute({
 
     try {
       onLogin(await login(values));
-      toast.success("¡Bienvenido a Software Contable!", { id: toastId });
+      toast.success("¡Bienvenido a Grupo BQ!", { id: toastId });
       navigate("/dashboard", { replace: true });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Usuario o contraseña incorrectos.", { id: toastId });
