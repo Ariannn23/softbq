@@ -14,14 +14,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noUncheckedIndexedAccess": true,
-    "baseUrl": ".",
     "paths": {
-      "@softbq/core/*": ["packages/core/src/*"],
-      "@softbq/sire/*": ["packages/sire/src/*"],
-      "@softbq/contasis/*": ["packages/contasis/src/*"],
-      "@softbq/excel/*": ["packages/excel/src/*"],
-      "@softbq/db/*": ["packages/db/src/*"],
-      "@softbq/config/*": ["packages/config/src/*"]
+      "@softbq/core/*": ["./packages/core/src/*"],
+      "@softbq/sire/*": ["./packages/sire/src/*"],
+      "@softbq/contasis/*": ["./packages/contasis/src/*"],
+      "@softbq/excel/*": ["./packages/excel/src/*"],
+      "@softbq/db/*": ["./packages/db/src/*"],
+      "@softbq/config/*": ["./packages/config/src/*"]
     }
   }
 }
