@@ -32,8 +32,8 @@ function ensureAdmin(user: AuthenticatedUser | undefined) {
     throw new ClientServiceError("Sesion requerida.", 401);
   }
 
-  if (user.role !== "admin") {
-    throw new ClientServiceError("Solo admin puede importar clientes.", 403);
+  if (user.role !== "admin" && user.role !== "principal_accountant") {
+    throw new ClientServiceError("No tienes permisos para importar clientes.", 403);
   }
 }
 

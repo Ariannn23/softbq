@@ -18,13 +18,8 @@ export function ImportClientsPage({
   const navigate = useNavigate();
   const state = useClientImport(onClientsChanged);
 
-  if (user.role !== "admin") {
-    return (
-      <div className="mx-auto max-w-[1540px] px-7 py-8">
-        <h1 className="text-3xl font-bold">Importar clientes</h1>
-        <p className="mt-4 rounded-md border border-[#d8e8f6] bg-white p-5 text-[#26466f]">Solo admin puede importar clientes desde Excel.</p>
-      </div>
-    );
+  if (!user) {
+    return <p className="p-8 text-[#072d4a]">Cargando...</p>;
   }
 
   return (
