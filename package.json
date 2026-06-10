@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
-    "electron": "^42.4.0",
+    "electron": "^32.2.8",
     "electron-builder": "^26.15.2",
     "typescript": "^5.8.3"
   },
@@ -44,14 +44,15 @@
       "output": "C:/Users/arian/softbq-build"
     },
     "win": {
-      "target": ["nsis"],
+      "target": [
+        "nsis"
+      ],
       "icon": "apps/web/public/images/icono.png"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
     },
-    "npmRebuild": false,
     "asar": true,
     "asarUnpack": [
       "**/*.node"
@@ -63,6 +64,7 @@
       "apps/web/dist/**/*",
       "packages/**/dist/**/*",
       "packages/**/package.json",
+      "storage/softbq.db",
       "node_modules/**/*",
       "package.json"
     ]

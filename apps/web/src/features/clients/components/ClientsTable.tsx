@@ -34,15 +34,15 @@ export function ClientsTable({
           </tr>
         </thead>
         <tbody>
-          {loading ? <TableRowsSkeleton columns={8} rows={10} /> : null}
+          {loading && clients.length === 0 ? <TableRowsSkeleton columns={8} rows={10} /> : null}
           {!loading && clients.length === 0 ? (
             <tr>
               <td className="px-5 py-8 text-[#53698d]" colSpan={8}>No hay clientes registrados.</td>
             </tr>
           ) : null}
-          {!loading
+          {clients.length > 0
             ? clients.map((client) => (
-                <tr className="border-t border-[#e2edf8]" key={client.id}>
+                <tr className={`border-t border-[#e2edf8] ${loading ? "opacity-50" : ""}`} key={client.id}>
                   <td className="px-5 py-4 font-mono">{client.ruc}</td>
                   <td className="px-5 py-4 font-medium">{client.businessName}</td>
                   <td className="px-5 py-4">{client.shortName}</td>
@@ -52,13 +52,13 @@ export function ClientsTable({
                   <td className="px-5 py-4">{client.defaultIgvPercent}%</td>
                   <td className="px-5 py-4">
                     <div className="flex justify-end gap-2">
-                      <IconButton disabled={!client.active} icon={Eye} label="Ver detalles" onClick={() => onView(client)} tone="purple" />
-                      <IconButton disabled={!client.active} icon={Pencil} label="Editar" onClick={() => onEdit(client)} tone="blue" />
+                      <IconButton disabled={!client.active || loading} icon={Eye} label="Ver detalles" onClick={() => onView(client)} tone="purple" />
+                      <IconButton disabled={!client.active || loading} icon={Pencil} label="Editar" onClick={() => onEdit(client)} tone="blue" />
                       {user.role === "admin" && (
                         client.active ? (
-                          <IconButton icon={Ban} label="Inhabilitar" onClick={() => onToggleClient(client, "disable")} tone="red" />
+                          <IconButton disabled={loading} icon={Ban} label="Inhabilitar" onClick={() => onToggleClient(client, "disable")} tone="red" />
                         ) : (
-                          <IconButton icon={UserCheck} label="Habilitar" onClick={() => onToggleClient(client, "enable")} tone="green" />
+                          <IconButton disabled={loading} icon={UserCheck} label="Habilitar" onClick={() => onToggleClient(client, "enable")} tone="green" />
                         )
                       )}
                     </div>

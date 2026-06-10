@@ -28,6 +28,17 @@ function startServer() {
     fs.mkdirSync(storageDir, { recursive: true });
   }
 
+  const userDbPath = path.join(storageDir, 'softbq.db');
+  
+  // If the database doesn't exist, copy the template from the bundled app
+  if (!fs.existsSync(userDbPath)) {
+    const templateDbPath = path.join(__dirname, '../storage/softbq.db');
+    if (fs.existsSync(templateDbPath)) {
+      fs.copyFileSync(templateDbPath, userDbPath);
+      console.log('Database template copied successfully to:', userDbPath);
+    }
+  }
+
   const env = {
     ...process.env,
     PORT: '3001',

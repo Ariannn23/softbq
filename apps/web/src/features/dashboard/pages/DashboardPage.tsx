@@ -249,7 +249,7 @@ export function DashboardPage({ clientsVersion }: { clientsVersion?: number }) {
         </div>
       </div>
 
-      {isLoading ? (
+      {isLoading && !data ? (
         <div className="flex justify-center items-center py-20">
           <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
         </div>
@@ -262,7 +262,7 @@ export function DashboardPage({ clientsVersion }: { clientsVersion?: number }) {
           </p>
         </div>
       ) : data ? (
-        <>
+        <div className={`space-y-6 transition-opacity duration-200 ${isLoading ? "opacity-50 pointer-events-none" : ""}`}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             <SummaryCard
               title="Clientes activos"
@@ -585,7 +585,7 @@ export function DashboardPage({ clientsVersion }: { clientsVersion?: number }) {
               />
             </div>
           </div>
-        </>
+        </div>
       ) : null}
     </div>
   );
