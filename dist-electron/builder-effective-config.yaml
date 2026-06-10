@@ -1,0 +1,24 @@
+directories:
+  output: dist-electron
+  buildResources: build
+appId: com.grupobq.softbq
+productName: SoftBQ
+win:
+  target:
+    - nsis
+  icon: apps/web/public/images/icono.png
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+asar: true
+asarUnpack:
+  - '**/*.node'
+files:
+  - filter:
+      - electron/**/*
+      - apps/server/dist/**/*
+      - apps/web/dist/**/*
+      - packages/**/dist/**/*
+      - node_modules/**/*
+      - package.json
+electronVersion: 42.4.0

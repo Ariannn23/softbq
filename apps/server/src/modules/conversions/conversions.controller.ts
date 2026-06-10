@@ -22,7 +22,9 @@ export async function validateConversionController(
   let purchasesFile: { name: string; path: string; size: number } | null = null;
 
   // Ensure upload directory exists
-  const uploadDir = path.resolve(process.cwd(), "../../storage/uploads");
+  const uploadDir = process.env.SOFTBQ_STORAGE_PATH 
+    ? path.resolve(process.env.SOFTBQ_STORAGE_PATH, "uploads")
+    : path.resolve(process.cwd(), "../../storage/uploads");
   await fs.mkdir(uploadDir, { recursive: true });
 
   for await (const part of parts) {

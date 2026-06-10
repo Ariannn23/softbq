@@ -25,7 +25,9 @@ type ImportSession = {
 };
 
 const sessions = new Map<string, ImportSession>();
-const tempImportDir = resolve(process.cwd(), "storage/temp/client-imports");
+const tempImportDir = process.env.SOFTBQ_STORAGE_PATH
+  ? resolve(process.env.SOFTBQ_STORAGE_PATH, "temp/client-imports")
+  : resolve(process.cwd(), "storage/temp/client-imports");
 
 function ensureAdmin(user: AuthenticatedUser | undefined) {
   if (!user) {

@@ -37,7 +37,9 @@ export interface ConversionJobData {
 }
 
 export async function processConversionJob(data: ConversionJobData) {
-  const outputDir = path.resolve(process.cwd(), "../../storage/outputs");
+  const outputDir = process.env.SOFTBQ_STORAGE_PATH
+    ? path.resolve(process.env.SOFTBQ_STORAGE_PATH, "outputs")
+    : path.resolve(process.cwd(), "../../storage/outputs");
   await fs.mkdir(outputDir, { recursive: true });
 
   // 1. Fetch client info
