@@ -1,5 +1,3 @@
-import { api } from "../../shared/api";
-
 export interface ObligationClient {
   id: number;
   ruc: string;
@@ -21,8 +19,9 @@ export interface ObligationsResponse {
 }
 
 export async function getObligationsData(period: string): Promise<ObligationsResponse> {
-  const { data } = await api.get<ObligationsResponse>(`/obligations?period=${period}`);
-  return data;
+  const res = await fetch(`/api/obligations?period=${period}`);
+  if (!res.ok) throw new Error("Error fetching obligations");
+  return res.json();
 }
 
 export async function updateObligationStatus(
@@ -31,5 +30,10 @@ export async function updateObligationStatus(
   field: keyof ObligationClient,
   value: boolean
 ): Promise<void> {
-  await api.put(`/obligations/${clientId}/${period}`, { [field]: value });
+  const res = await fetch(`/api/obligations/${clientId}/${period}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ [field]: value })
+  });
+  if (!res.ok) throw new Error("Error updating obligation");
 }

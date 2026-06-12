@@ -150,12 +150,6 @@ export function DashboardPage({ clientsVersion }: { clientsVersion?: number }) {
             Declarado
           </span>
         );
-      case "plame_declarado":
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-700 border border-indigo-200">
-            PLAME Declarado
-          </span>
-        );
       default:
         return (
           <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700">
@@ -385,33 +379,26 @@ export function DashboardPage({ clientsVersion }: { clientsVersion?: number }) {
                         "ventas_cargadas",
                         "generado",
                         "revisado",
-                        "declarado",
-                        "plame_declarado",
+                        "declarado"
                       ]);
                       const hasCompras = hasStatusOrHigher(client.status, [
                         "compras_cargadas",
                         "generado",
                         "revisado",
-                        "declarado",
-                        "plame_declarado",
+                        "declarado"
                       ]);
                       const hasGenerado = hasStatusOrHigher(client.status, [
                         "generado",
                         "revisado",
-                        "declarado",
-                        "plame_declarado",
+                        "declarado"
                       ]);
                       const hasRevisado = hasStatusOrHigher(client.status, [
                         "revisado",
-                        "declarado",
-                        "plame_declarado",
+                        "declarado"
                       ]);
                       const hasDeclarado = hasStatusOrHigher(client.status, [
-                        "declarado",
-                        "plame_declarado",
+                        "declarado"
                       ]);
-                      const hasPlameStatus =
-                        client.status === "plame_declarado";
 
                       return (
                         <tr
