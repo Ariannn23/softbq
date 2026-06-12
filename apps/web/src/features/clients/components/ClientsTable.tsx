@@ -30,6 +30,10 @@ export function ClientsTable({
             <th className="px-5 py-4">Codigo entidad Contasis</th>
             <th className="px-5 py-4">Descripcion entidad Contasis</th>
             <th className="px-5 py-4">IGV por defecto</th>
+            <th className="px-5 py-4">Ventas Base</th>
+            <th className="px-5 py-4">Ventas Total</th>
+            <th className="px-5 py-4">Compras Base</th>
+            <th className="px-5 py-4">Compras Total</th>
             <th className="px-5 py-4 text-right">Acciones</th>
           </tr>
         </thead>
@@ -37,7 +41,7 @@ export function ClientsTable({
           {loading && clients.length === 0 ? <TableRowsSkeleton columns={8} rows={10} /> : null}
           {!loading && clients.length === 0 ? (
             <tr>
-              <td className="px-5 py-8 text-[#53698d]" colSpan={8}>No hay clientes registrados.</td>
+              <td className="px-5 py-8 text-[#53698d]" colSpan={12}>No hay clientes registrados.</td>
             </tr>
           ) : null}
           {clients.length > 0
@@ -50,6 +54,10 @@ export function ClientsTable({
                   <td className="px-5 py-4">{client.contasisEntityCode}</td>
                   <td className="px-5 py-4">{client.contasisEntityDescription}</td>
                   <td className="px-5 py-4">{client.defaultIgvPercent}%</td>
+                  <td className="px-5 py-4 font-mono">{client.salesBaseAccount || "-"}</td>
+                  <td className="px-5 py-4 font-mono">{client.salesTotalAccount || "-"}</td>
+                  <td className="px-5 py-4 font-mono">{client.purchasesBaseAccount || "-"}</td>
+                  <td className="px-5 py-4 font-mono">{client.purchasesTotalAccount || "-"}</td>
                   <td className="px-5 py-4">
                     <div className="flex justify-end gap-2">
                       <IconButton disabled={!client.active || loading} icon={Eye} label="Ver detalles" onClick={() => onView(client)} tone="purple" />

@@ -1,4 +1,4 @@
-import { and, eq, like, ne, or, asc } from "drizzle-orm";
+import { and, eq, ilike, ne, or, asc } from "drizzle-orm";
 
 import { clients, db } from "@softbq/db";
 
@@ -19,9 +19,9 @@ export async function listClients(search?: string): Promise<ClientRecord[]> {
     .from(clients)
     .where(
       or(
-        like(clients.ruc, pattern),
-        like(clients.businessName, pattern),
-        like(clients.shortName, pattern)
+        ilike(clients.ruc, pattern),
+        ilike(clients.businessName, pattern),
+        ilike(clients.shortName, pattern)
       )
     )
     .orderBy(asc(clients.businessName));
