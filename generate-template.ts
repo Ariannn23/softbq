@@ -15,6 +15,10 @@ async function generate() {
     { header: "IGV por defecto", key: "defaultIgvPercent", width: 15 },
     { header: "Honorarios mensuales", key: "monthlyFee", width: 20 },
     { header: "Declara PLAME", key: "hasPlame", width: 15 },
+    { header: "Declara AFPNET", key: "hasAfpnet", width: 15 },
+    { header: "Declara ITAN", key: "hasItan", width: 15 },
+    { header: "Declara DAOT", key: "hasDaot", width: 15 },
+    { header: "Declara PDT 710", key: "hasPdt710", width: 15 },
     { header: "Cuenta de Ventas", key: "salesAccount", width: 20 },
     { header: "Cuenta de Compras", key: "purchasesAccount", width: 20 }
   ];

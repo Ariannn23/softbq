@@ -11,6 +11,10 @@ export type ClientImportField =
   | "defaultIgvPercent"
   | "monthlyFee"
   | "hasPlame"
+  | "hasAfpnet"
+  | "hasItan"
+  | "hasDaot"
+  | "hasPdt710"
   | "salesAccount"
   | "purchasesAccount";
 
@@ -27,6 +31,10 @@ export type ClientImportRow = {
   defaultIgvPercent: number;
   monthlyFee: number | null;
   hasPlame: boolean;
+  hasAfpnet: boolean;
+  hasItan: boolean;
+  hasDaot: boolean;
+  hasPdt710: boolean;
   salesAccount: string;
   purchasesAccount: string;
 };
@@ -68,6 +76,10 @@ const fieldAliases: Record<ClientImportField, string[]> = {
   defaultIgvPercent: ["igv", "igv por defecto", "porcentaje igv"],
   monthlyFee: ["honorarios", "honorario", "honorarios mensuales", "pago mensual"],
   hasPlame: ["tiene plame", "plame", "declara plame"],
+  hasAfpnet: ["tiene afpnet", "afpnet", "declara afpnet"],
+  hasItan: ["tiene itan", "itan", "declara itan"],
+  hasDaot: ["tiene daot", "daot", "declara daot"],
+  hasPdt710: ["tiene pdt", "pdt 710", "declara pdt 710"],
   salesAccount: ["cuenta de ventas", "cuenta ventas"],
   purchasesAccount: ["cuenta de compras", "cuenta compras"]
 };
@@ -229,6 +241,10 @@ function buildClientRow(input: {
     defaultIgvPercent: parseIgv(readMappedCell(input, "defaultIgvPercent")),
     monthlyFee: parseMonthlyFee(readMappedCell(input, "monthlyFee")),
     hasPlame: readMappedCell(input, "hasPlame").toUpperCase() === "SI" || readMappedCell(input, "hasPlame").toUpperCase() === "SÍ" || readMappedCell(input, "hasPlame") === "1",
+    hasAfpnet: readMappedCell(input, "hasAfpnet").toUpperCase() === "SI" || readMappedCell(input, "hasAfpnet").toUpperCase() === "SÍ" || readMappedCell(input, "hasAfpnet") === "1",
+    hasItan: readMappedCell(input, "hasItan").toUpperCase() === "SI" || readMappedCell(input, "hasItan").toUpperCase() === "SÍ" || readMappedCell(input, "hasItan") === "1",
+    hasDaot: readMappedCell(input, "hasDaot").toUpperCase() === "SI" || readMappedCell(input, "hasDaot").toUpperCase() === "SÍ" || readMappedCell(input, "hasDaot") === "1",
+    hasPdt710: readMappedCell(input, "hasPdt710").toUpperCase() === "SI" || readMappedCell(input, "hasPdt710").toUpperCase() === "SÍ" || readMappedCell(input, "hasPdt710") === "1",
     salesAccount: readMappedCell(input, "salesAccount") || "",
     purchasesAccount: readMappedCell(input, "purchasesAccount") || ""
   };
