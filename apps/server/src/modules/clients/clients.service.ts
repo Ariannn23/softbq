@@ -30,6 +30,10 @@ export type ClientInput = {
   defaultIgvPercent: number;
   monthlyFee?: number | null;
   hasPlame?: boolean;
+  hasAfpnet?: boolean;
+  hasItan?: boolean;
+  hasDaot?: boolean;
+  hasPdt710?: boolean;
   salesAccount?: string;
   purchasesAccount?: string;
 };
@@ -72,6 +76,10 @@ function toClient(record: Awaited<ReturnType<typeof findClientById>>): Client {
     defaultIgvPercent: record.defaultIgvPercent,
     monthlyFee: record.monthlyFee,
     hasPlame: record.hasPlame,
+    hasAfpnet: record.hasAfpnet,
+    hasItan: record.hasItan,
+    hasDaot: record.hasDaot,
+    hasPdt710: record.hasPdt710,
     salesAccount: record.salesAccount,
     purchasesAccount: record.purchasesAccount,
     createdAt: record.createdAt,
@@ -91,6 +99,10 @@ function normalizeClientInput(input: ClientInput): ClientInput {
     defaultIgvPercent: input.defaultIgvPercent,
     monthlyFee: input.monthlyFee ?? null,
     hasPlame: input.hasPlame ?? false,
+    hasAfpnet: input.hasAfpnet ?? false,
+    hasItan: input.hasItan ?? false,
+    hasDaot: input.hasDaot ?? false,
+    hasPdt710: input.hasPdt710 ?? false,
     salesAccount: input.salesAccount?.trim() ?? "",
     purchasesAccount: input.purchasesAccount?.trim() ?? ""
   };

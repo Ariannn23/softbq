@@ -3,6 +3,12 @@ const path = require('path');
 const fs = require('fs');
 const { fork } = require('child_process');
 const http = require('http');
+const { autoUpdater } = require('electron-updater');
+const log = require('electron-log');
+
+// Configurar logs para el actualizador
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
 
 let mainWindow;
 let serverProcess;
@@ -30,20 +36,10 @@ function startServer() {
 
   const userDbPath = path.join(storageDir, 'softbq.db');
   
-  // If the database doesn't exist, copy the template from the bundled app
-  if (!fs.existsSync(userDbPath)) {
-    const templateDbPath = path.join(__dirname, '../storage/softbq.db');
-    if (fs.existsSync(templateDbPath)) {
-      fs.copyFileSync(templateDbPath, userDbPath);
-      console.log('Database template copied successfully to:', userDbPath);
-    }
-  }
-
   const env = {
     ...process.env,
     PORT: '3001',
     HOST: '127.0.0.1',
-    SOFTBQ_DB_PATH: path.join(storageDir, 'softbq.db'),
     SOFTBQ_STORAGE_PATH: storageDir,
     SOFTBQ_WEB_DIST_PATH: path.join(__dirname, '../apps/web/dist')
   };
@@ -97,6 +93,22 @@ app.whenReady().then(async () => {
       createWindow();
       mainWindow.loadURL('http://127.0.0.1:3001');
     }
+  });
+
+  // Verificar actualizaciones silenciosamente en segundo plano
+  autoUpdater.checkForUpdatesAndNotify();
+
+  autoUpdater.on('update-downloaded', (info) => {
+    dialog.showMessageBox({
+      type: 'info',
+      title: 'Actualización disponible',
+      message: 'Se ha descargado una nueva versión de SoftBQ. ¿Deseas reiniciar la aplicación para instalarla ahora?',
+      buttons: ['Reiniciar y Actualizar', 'Más tarde']
+    }).then((result) => {
+      if (result.response === 0) {
+        autoUpdater.quitAndInstall();
+      }
+    });
   });
 });
 

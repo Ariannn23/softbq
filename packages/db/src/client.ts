@@ -1,25 +1,12 @@
-import Database from "better-sqlite3";
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import { mkdirSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 
 import * as schema from "./schema/index.js";
 
-const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const repoRoot = resolve(packageRoot, "../..");
-const defaultDatabasePath = resolve(repoRoot, "storage/softbq.db");
+const connectionString = process.env.DATABASE_URL || "postgresql://postgres.eljvqudjvruckvftfijb:AAbq200423**@aws-1-us-east-2.pooler.supabase.com:5432/postgres";
 
-export const databasePath = process.env.SOFTBQ_DB_PATH
-  ? resolve(process.env.SOFTBQ_DB_PATH)
-  : defaultDatabasePath;
+export const queryClient = postgres(connectionString, { prepare: false });
 
-mkdirSync(dirname(databasePath), { recursive: true });
-
-export const sqlite = new Database(databasePath);
-sqlite.pragma("foreign_keys = ON");
-sqlite.pragma("journal_mode = WAL");
-
-export const db = drizzle(sqlite, { schema });
+export const db = drizzle(queryClient, { schema });
 
 export type SoftbqDatabase = typeof db;

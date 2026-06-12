@@ -285,8 +285,7 @@ export function DashboardPage({ clientsVersion }: { clientsVersion?: number }) {
                 data.summary.ventasCargadas +
                 data.summary.generado +
                 data.summary.revisado +
-                data.summary.declarado +
-                data.summary.plameDeclarado
+                data.summary.declarado
               }
               icon={<ShoppingCart className="w-6 h-6 text-green-500" />}
               iconBgColor="bg-green-50"
@@ -298,8 +297,7 @@ export function DashboardPage({ clientsVersion }: { clientsVersion?: number }) {
                 data.summary.comprasCargadas +
                 data.summary.generado +
                 data.summary.revisado +
-                data.summary.declarado +
-                data.summary.plameDeclarado
+                data.summary.declarado
               }
               icon={<ShoppingBag className="w-6 h-6 text-purple-500" />}
               iconBgColor="bg-purple-50"
@@ -310,8 +308,7 @@ export function DashboardPage({ clientsVersion }: { clientsVersion?: number }) {
               value={
                 data.summary.generado +
                 data.summary.revisado +
-                data.summary.declarado +
-                data.summary.plameDeclarado
+                data.summary.declarado
               }
               icon={<FileText className="w-6 h-6 text-teal-500" />}
               iconBgColor="bg-teal-50"
@@ -321,8 +318,7 @@ export function DashboardPage({ clientsVersion }: { clientsVersion?: number }) {
               subtitle="Clientes revisados"
               value={
                 data.summary.revisado +
-                data.summary.declarado +
-                data.summary.plameDeclarado
+                data.summary.declarado
               }
               icon={<Eye className="w-6 h-6 text-blue-500" />}
               iconBgColor="bg-blue-50"
@@ -330,16 +326,9 @@ export function DashboardPage({ clientsVersion }: { clientsVersion?: number }) {
             <SummaryCard
               title="Clientes declarados"
               subtitle="Clientes declarados"
-              value={data.summary.declarado + data.summary.plameDeclarado}
+              value={data.summary.declarado}
               icon={<CheckCircle2 className="w-6 h-6 text-green-500" />}
               iconBgColor="bg-green-50"
-            />
-            <SummaryCard
-              title="PLAME Declarado"
-              subtitle="Planilla declarada"
-              value={data.summary.plameDeclarado}
-              icon={<CheckCircle2 className="w-6 h-6 text-indigo-500" />}
-              iconBgColor="bg-indigo-50"
             />
           </div>
 
@@ -376,7 +365,6 @@ export function DashboardPage({ clientsVersion }: { clientsVersion?: number }) {
                     <th className="px-4 py-3 text-center">Archivo generado</th>
                     <th className="px-4 py-3 text-center">Revisado</th>
                     <th className="px-4 py-3 text-center">Declarado</th>
-                    <th className="px-4 py-3 text-center">PLAME</th>
                     <th className="px-4 py-3 text-center">Estado</th>
                     <th className="px-4 py-3 text-center">Acciones</th>
                   </tr>
@@ -450,15 +438,6 @@ export function DashboardPage({ clientsVersion }: { clientsVersion?: number }) {
                           </td>
                           <td className="px-4 py-3 text-center">
                             {checkIcon(hasDeclarado, "text-green-500")}
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            {client.hasPlame ? (
-                              checkIcon(hasPlameStatus, "text-indigo-500")
-                            ) : (
-                              <div className="text-slate-300 text-xs font-semibold mx-auto">
-                                N/A
-                              </div>
-                            )}
                           </td>
                           <td className="px-4 py-3 text-center">
                             {getStatusBadge(client.status)}
@@ -540,20 +519,6 @@ export function DashboardPage({ clientsVersion }: { clientsVersion?: number }) {
                                         >
                                           Declarado
                                         </button>
-                                        {client.hasPlame && (
-                                          <button
-                                            onClick={() => {
-                                              handleStatusChange(
-                                                client.id,
-                                                "plame_declarado",
-                                              );
-                                              setOpenMenuId(null);
-                                            }}
-                                            className="w-full text-left px-3 py-1.5 text-sm hover:bg-slate-50 text-slate-700"
-                                          >
-                                            PLAME Declarado
-                                          </button>
-                                        )}
                                       </div>
                                     )}
                                   </div>

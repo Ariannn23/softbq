@@ -20,6 +20,10 @@ export const clientSchema = z.object({
   defaultIgvPercent: z.coerce.number().min(0).max(100),
   monthlyFee: z.coerce.number().min(0).optional().nullable(),
   hasPlame: z.boolean(),
+  hasAfpnet: z.boolean().default(false),
+  hasItan: z.boolean().default(false),
+  hasDaot: z.boolean().default(false),
+  hasPdt710: z.boolean().default(false),
   salesAccount: z.string().trim(),
   purchasesAccount: z.string().trim(),
 });
@@ -30,7 +34,7 @@ export type ClientValues = z.infer<typeof clientSchema>;
 export type SessionUser = {
   id: number;
   username: string;
-  role: "admin" | "principal_accountant";
+  role: "admin" | "principal_accountant" | "assistant";
 };
 
 export type Client = ClientValues & {
@@ -87,6 +91,10 @@ export const emptyClient: ClientValues = {
   defaultIgvPercent: 18,
   monthlyFee: null,
   hasPlame: false,
+  hasAfpnet: false,
+  hasItan: false,
+  hasDaot: false,
+  hasPdt710: false,
   salesAccount: "",
   purchasesAccount: "",
 };
@@ -106,6 +114,10 @@ export const importFields: Array<{
   { key: "defaultIgvPercent", label: "IGV por defecto" },
   { key: "monthlyFee", label: "Honorarios mensuales" },
   { key: "hasPlame", label: "Declara PLAME" },
+  { key: "hasAfpnet", label: "Declara AFPNET" },
+  { key: "hasItan", label: "Declara ITAN" },
+  { key: "hasDaot", label: "Declara DAOT" },
+  { key: "hasPdt710", label: "Declara PDT 710" },
   { key: "salesAccount", label: "Cuenta de Ventas" },
   { key: "purchasesAccount", label: "Cuenta de Compras" },
 ];

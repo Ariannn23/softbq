@@ -1,14 +1,22 @@
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
-import { BarChart3, ChevronLeft, ChevronRight, CircleDollarSign, FileSpreadsheet, Files, Home, Laptop, LogOut, Settings, User, Users } from "lucide-react";
+import { BarChart3, ChevronLeft, ChevronRight, CircleDollarSign, FileSpreadsheet, Files, Home, Laptop, LogOut, Settings, User, Users, FileCheck } from "lucide-react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
 import type { SessionUser } from "../shared/types";
 import { BrandMark } from "../shared/ui";
 
 const getNavItems = (role: string) => {
+  if (role === "assistant") {
+    return [
+      { path: "/clients", label: "Clientes", icon: Users, enabled: true },
+      { path: "/billing", label: "Cobranzas", icon: CircleDollarSign, enabled: true },
+    ];
+  }
+
   const items = [
     { path: "/dashboard", label: "Panel Principal", icon: Home, enabled: true },
+    { path: "/obligations", label: "Obligaciones", icon: FileCheck, enabled: true },
     { path: "/conversions", label: "Conversiones", icon: FileSpreadsheet, enabled: true },
     { path: "/clients", label: "Clientes", icon: Users, enabled: true },
     { path: "/billing", label: "Cobranzas", icon: CircleDollarSign, enabled: true },
@@ -91,21 +99,28 @@ export function AppLayout({
         </nav>
 
         <div className={`border-t border-white/20 py-6 transition-all ${isCompact ? "px-0 flex justify-center" : "px-5"}`}>
-          <button onClick={onLogout} className={`flex items-center text-white/90 hover:bg-white/10 hover:text-white rounded-lg transition-colors ${isCompact ? "justify-center w-12 h-12" : "gap-3 w-full p-2"}`} title="Cerrar sesión">
-            <LogOut size={26} className="shrink-0" />
-            {!isCompact && <span className="font-medium whitespace-nowrap">Cerrar sesión</span>}
-          </button>
+          <div className="flex flex-col gap-4 w-full">
+            <button onClick={onLogout} className={`flex items-center text-white/90 hover:bg-white/10 hover:text-white rounded-lg transition-colors ${isCompact ? "justify-center w-12 h-12 mx-auto" : "gap-3 w-full p-2"}`} title="Cerrar sesión">
+              <LogOut size={26} className="shrink-0" />
+              {!isCompact && <span className="font-medium whitespace-nowrap">Cerrar sesión</span>}
+            </button>
+            {!isCompact && (
+              <div className="text-center text-xs text-white/50 font-medium tracking-wide">
+                Última versión v0.1.3
+              </div>
+            )}
+          </div>
         </div>
       </aside>
 
       <section className={`transition-all duration-300 ease-in-out ${isCompact ? "lg:pl-[88px]" : "lg:pl-[270px]"}`}>
         <header className="sticky top-0 z-10 flex h-[66px] items-center justify-end border-b border-[#d8e8f6] bg-white/95 px-6 backdrop-blur">
           <div className="flex items-center gap-5 text-sm">
-            <div className="flex items-center gap-2"><Laptop size={24} /><span className="h-2 w-2 rounded-full bg-emerald-500" />LOCAL</div>
+            <div className="flex items-center gap-2"><Laptop size={24} /><span className="h-2 w-2 rounded-full bg-emerald-500" />EN LÍNEA</div>
             <div className="h-7 w-px bg-[#d8e8f6]" />
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#dff1ff] text-[#056ba6]"><User size={20} /></div>
-              <span className="font-semibold">{user.role === "admin" ? "Administrador" : "Contador principal"}</span>
+              <span className="font-semibold">{user.role === "admin" ? "Administrador" : user.role === "assistant" ? "Asistente" : "Contador principal"}</span>
             </div>
           </div>
         </header>

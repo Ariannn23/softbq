@@ -34,14 +34,18 @@ export function ClientsPage({
             <Download size={20} />
             Descargar formato
           </a>
-          <button className="flex h-[42.4px] items-center gap-3 rounded-md border border-[#c9dbef] bg-white px-6 font-semibold text-[#056ba6] hover:bg-slate-50 transition-colors" onClick={() => navigate("/clients/import")} type="button">
-            <Upload size={20} />
-            Importar clientes
-          </button>
-          <button className="flex h-[42.4px] items-center gap-3 rounded-md bg-[#056ba6] px-6 font-semibold text-white hover:bg-[#045585] transition-colors" onClick={state.startCreate} type="button">
-            <PlusCircle size={20} />
-            Crear cliente
-          </button>
+          {user.role !== "assistant" && (
+            <>
+              <button className="flex h-[42.4px] items-center gap-3 rounded-md border border-[#c9dbef] bg-white px-6 font-semibold text-[#056ba6] hover:bg-slate-50 transition-colors" onClick={() => navigate("/clients/import")} type="button">
+                <Upload size={20} />
+                Importar clientes
+              </button>
+              <button className="flex h-[42.4px] items-center gap-3 rounded-md bg-[#056ba6] px-6 font-semibold text-white hover:bg-[#045585] transition-colors" onClick={state.startCreate} type="button">
+                <PlusCircle size={20} />
+                Crear cliente
+              </button>
+            </>
+          )}
         </div>
       </div>
 

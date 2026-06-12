@@ -4,8 +4,7 @@ export type ClientPeriodStatus =
   | "compras_cargadas" 
   | "generado" 
   | "revisado" 
-  | "declarado"
-  | "plame_declarado";
+  | "declarado";
 
 export type DashboardClientInfo = {
   id: number;
@@ -23,7 +22,6 @@ export interface DashboardSummary {
   generado: number;
   revisado: number;
   declarado: number;
-  plameDeclarado: number;
 };
 
 export type DashboardResponse = {

@@ -44,6 +44,50 @@ export function ClientForm({
             <div className="peer h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
           </label>
         </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-[13px] font-semibold uppercase text-slate-500">¿Declara AFPNET?</label>
+          <label className="relative inline-flex cursor-pointer items-center mt-2">
+            <input
+              type="checkbox"
+              className="peer sr-only"
+              {...form.register("hasAfpnet")}
+            />
+            <div className="peer h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
+          </label>
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-[13px] font-semibold uppercase text-slate-500">¿Declara ITAN?</label>
+          <label className="relative inline-flex cursor-pointer items-center mt-2">
+            <input
+              type="checkbox"
+              className="peer sr-only"
+              {...form.register("hasItan")}
+            />
+            <div className="peer h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
+          </label>
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-[13px] font-semibold uppercase text-slate-500">¿Declara DAOT?</label>
+          <label className="relative inline-flex cursor-pointer items-center mt-2">
+            <input
+              type="checkbox"
+              className="peer sr-only"
+              {...form.register("hasDaot")}
+            />
+            <div className="peer h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
+          </label>
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-[13px] font-semibold uppercase text-slate-500">¿Declara PDT 710?</label>
+          <label className="relative inline-flex cursor-pointer items-center mt-2">
+            <input
+              type="checkbox"
+              className="peer sr-only"
+              {...form.register("hasPdt710")}
+            />
+            <div className="peer h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
+          </label>
+        </div>
 
         <div className="flex items-end gap-3 xl:col-span-4 mt-2">
           <button className="h-11 rounded-md bg-[#056ba6] px-7 font-semibold text-white" type="submit">Guardar</button>

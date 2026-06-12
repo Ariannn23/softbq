@@ -14,8 +14,11 @@ import { ConversionResultPage } from "./features/conversions/pages/ConversionRes
 import { BillingPage } from "./features/billing/pages/BillingPage";
 import { BillingHistoryPage } from "./features/billing/pages/BillingHistoryPage";
 import { SettingsPage } from "./features/settings/pages/SettingsPage";
+import { ObligationsPage } from "./features/obligations/pages/ObligationsPage";
 import type { LoginValues, SessionUser } from "./features/shared/types";
 import { fetchSession, login, logout } from "./features/auth/services/authApi";
+import { BlockingUpdateOverlay } from "./features/layout/BlockingUpdateOverlay";
+import { isVersionOlder } from "./lib/version";
 
 export function App() {
   return (
@@ -30,9 +33,23 @@ function AppRoutes() {
   const [checkingSession, setCheckingSession] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
   const [clientsVersion, setClientsVersion] = useState(0);
+  const [minVersionRequired, setMinVersionRequired] = useState<string | null>(null);
 
   useEffect(() => {
-    async function loadSession() {
+    async function loadConfigAndSession() {
+      try {
+        // Fetch public config
+        const res = await fetch('/api/public-settings').catch(() => null);
+        if (res && res.ok) {
+          const config = await res.json();
+          if (config.min_version_required) {
+            setMinVersionRequired(config.min_version_required);
+          }
+        }
+      } catch (e) {
+        // Ignore config errors
+      }
+
       try {
         setUser(await fetchSession());
       } finally {
@@ -40,7 +57,7 @@ function AppRoutes() {
       }
     }
 
-    void loadSession();
+    void loadConfigAndSession();
   }, []);
 
   async function handleLogout() {
@@ -48,8 +65,16 @@ function AppRoutes() {
     setUser(null);
   }
 
+  // Use the global __APP_VERSION__ if defined, otherwise assume 0.0.0 for dev
+  const currentVersion = typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "0.0.0";
+  const needsUpdate = minVersionRequired && currentVersion !== "0.0.0" ? isVersionOlder(currentVersion, minVersionRequired) : false;
+
   if (checkingSession) {
     return <LoginSkeleton />;
+  }
+
+  if (needsUpdate && minVersionRequired) {
+    return <BlockingUpdateOverlay minVersion={minVersionRequired} />;
   }
 
   if (!user) {
@@ -91,6 +116,7 @@ function AppRoutes() {
         <Route path="/billing" element={<BillingPage />} />
         <Route path="/billing/history" element={<BillingHistoryPage />} />
         <Route path="/settings" element={<SettingsPage user={user} />} />
+        <Route path="/obligations" element={<ObligationsPage />} />
       </Route>
       <Route path="/login" element={<Navigate replace to="/dashboard" />} />
       <Route path="*" element={<Navigate replace to="/dashboard" />} />

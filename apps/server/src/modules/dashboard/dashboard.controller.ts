@@ -48,10 +48,13 @@ export async function getDashboardController(
     let totalGenerado = 0;
     let totalRevisado = 0;
     let totalDeclarado = 0;
-    let totalPlameDeclarado = 0;
 
     const list = activeClients.map(c => {
-      const status = statusMap.get(c.id) || "pendiente";
+      let status = statusMap.get(c.id) || "pendiente";
+      
+      if (status === "plame_declarado") {
+        status = "declarado"; // Map legacy plame_declarado to declarado
+      }
       
       if (status === "pendiente") totalPendiente++;
       else if (status === "ventas_cargadas") totalVentasCargadas++;
@@ -59,7 +62,6 @@ export async function getDashboardController(
       else if (status === "generado") totalGenerado++;
       else if (status === "revisado") totalRevisado++;
       else if (status === "declarado") totalDeclarado++;
-      else if (status === "plame_declarado") totalPlameDeclarado++;
       
       return {
         ...c,
@@ -75,8 +77,7 @@ export async function getDashboardController(
         comprasCargadas: totalComprasCargadas,
         generado: totalGenerado,
         revisado: totalRevisado,
-        declarado: totalDeclarado,
-        plameDeclarado: totalPlameDeclarado
+        declarado: totalDeclarado
       },
       clients: list
     });

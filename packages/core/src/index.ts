@@ -1,4 +1,4 @@
-export type UserRole = "admin" | "principal_accountant";
+export type UserRole = "admin" | "principal_accountant" | "assistant";
 
 export type SireFileType = "sales" | "purchases";
 
@@ -38,6 +38,10 @@ export interface ClientConfig {
   defaultIgvPercent: number;
   monthlyFee?: number | null;
   hasPlame: boolean;
+  hasAfpnet: boolean;
+  hasItan: boolean;
+  hasDaot: boolean;
+  hasPdt710: boolean;
   salesAccount: string;
   purchasesAccount: string;
 }

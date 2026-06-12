@@ -1,7 +1,7 @@
 import { hash } from "bcryptjs";
 import { eq } from "drizzle-orm";
 
-import { db, sqlite } from "./client.js";
+import { db, queryClient } from "./client.js";
 import { settings, users } from "./schema/index.js";
 
 const now = () => new Date().toISOString();
@@ -25,7 +25,7 @@ const baseSettings = [
   {
     key: "defaults.payment_method",
     value: "008",
-    description: "Código de pago por defecto",
+    description: "Cdigo de pago por defecto",
   },
   {
     key: "defaults.igv_percent",
@@ -42,7 +42,7 @@ const baseSettings = [
 async function upsertUser(input: {
   username: string;
   password: string;
-  role: "admin" | "principal_accountant";
+  role: "admin" | "principal_accountant" | "assistant";
 }) {
   const passwordHash = await hash(input.password, 12);
   const timestamp = now();
@@ -81,6 +81,12 @@ async function seed() {
     role: "principal_accountant",
   });
 
+  await upsertUser({
+    username: "asistente",
+    password: process.env.SOFTBQ_ASSISTANT_PASSWORD ?? "asistente123",
+    role: "assistant",
+  });
+
   for (const setting of baseSettings) {
     await db
       .insert(settings)
@@ -117,5 +123,5 @@ async function seed() {
 try {
   await seed();
 } finally {
-  sqlite.close();
+  await queryClient.end();
 }

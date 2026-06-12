@@ -8,46 +8,52 @@ import type {
 } from "@softbq/core";
 import { relations, sql } from "drizzle-orm";
 import {
-  integer,
-  real,
-  sqliteTable,
+  pgTable,
+  serial,
   text,
+  boolean,
+  doublePrecision,
+  integer,
   uniqueIndex
-} from "drizzle-orm/sqlite-core";
+} from "drizzle-orm/pg-core";
 
 const currentTimestamp = sql`(CURRENT_TIMESTAMP)`;
 
-export const users = sqliteTable(
+export const users = pgTable(
   "users",
   {
-    id: integer("id").primaryKey({ autoIncrement: true }),
+    id: serial("id").primaryKey(),
     username: text("username").notNull(),
     passwordHash: text("password_hash").notNull(),
     role: text("role").$type<UserRole>().notNull(),
-    active: integer("active", { mode: "boolean" }).notNull().default(true),
+    active: boolean("active").notNull().default(true),
     createdAt: text("created_at").notNull().default(currentTimestamp),
     updatedAt: text("updated_at").notNull().default(currentTimestamp)
   },
   (table) => [uniqueIndex("users_username_unique").on(table.username)]
 );
 
-export const clients = sqliteTable(
+export const clients = pgTable(
   "clients",
   {
-    id: integer("id").primaryKey({ autoIncrement: true }),
+    id: serial("id").primaryKey(),
     ruc: text("ruc").notNull(),
     businessName: text("business_name").notNull(),
     shortName: text("short_name").notNull(),
-    active: integer("active", { mode: "boolean" }).notNull().default(true),
+    active: boolean("active").notNull().default(true),
     contasisEntityCode: text("contasis_entity_code").notNull().default("01"),
     contasisEntityDescription: text("contasis_entity_description")
       .notNull()
       .default("MI ORGANIZACION"),
     defaultCondition: text("default_condition").notNull().default("CON"),
     defaultPaymentMethod: text("default_payment_method").notNull().default("008"),
-    defaultIgvPercent: real("default_igv_percent").notNull().default(18),
-    monthlyFee: real("monthly_fee"),
-    hasPlame: integer("has_plame", { mode: "boolean" }).notNull().default(false),
+    defaultIgvPercent: doublePrecision("default_igv_percent").notNull().default(18),
+    monthlyFee: doublePrecision("monthly_fee"),
+    hasPlame: boolean("has_plame").notNull().default(false),
+    hasAfpnet: boolean("has_afpnet").notNull().default(false),
+    hasItan: boolean("has_itan").notNull().default(false),
+    hasDaot: boolean("has_daot").notNull().default(false),
+    hasPdt710: boolean("has_pdt_710").notNull().default(false),
     salesAccount: text("sales_account").notNull().default(""),
     purchasesAccount: text("purchases_account").notNull().default(""),
     createdAt: text("created_at").notNull().default(currentTimestamp),
@@ -56,22 +62,27 @@ export const clients = sqliteTable(
   (table) => [uniqueIndex("clients_ruc_unique").on(table.ruc)]
 );
 
-export const clientPeriods = sqliteTable(
+export const clientPeriods = pgTable(
   "client_periods",
   {
-    id: integer("id").primaryKey({ autoIncrement: true }),
+    id: serial("id").primaryKey(),
     clientId: integer("client_id")
       .notNull()
       .references(() => clients.id, { onDelete: "restrict" }),
     period: text("period").notNull(),
     status: text("status").$type<PeriodStatus>().notNull().default("pendiente"),
+    plameDeclared: boolean("plame_declared").notNull().default(false),
+    afpnetDeclared: boolean("afpnet_declared").notNull().default(false),
+    itanDeclared: boolean("itan_declared").notNull().default(false),
+    daotDeclared: boolean("daot_declared").notNull().default(false),
+    pdt710Declared: boolean("pdt710_declared").notNull().default(false),
     updatedAt: text("updated_at").notNull().default(currentTimestamp)
   },
   (table) => [uniqueIndex("client_periods_unique_period").on(table.clientId, table.period)]
 );
 
-export const conversions = sqliteTable("conversions", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const conversions = pgTable("conversions", {
+  id: serial("id").primaryKey(),
   clientId: integer("client_id")
     .notNull()
     .references(() => clients.id, { onDelete: "restrict" }),
@@ -84,14 +95,14 @@ export const conversions = sqliteTable("conversions", {
   purchasesStatus: text("purchases_status").$type<ConversionFileStatus>(),
   salesRecordsCount: integer("sales_records_count").notNull().default(0),
   purchasesRecordsCount: integer("purchases_records_count").notNull().default(0),
-  salesTotal: real("sales_total").notNull().default(0),
-  purchasesTotal: real("purchases_total").notNull().default(0),
+  salesTotal: doublePrecision("sales_total").notNull().default(0),
+  purchasesTotal: doublePrecision("purchases_total").notNull().default(0),
   createdAt: text("created_at").notNull().default(currentTimestamp),
   updatedAt: text("updated_at").notNull().default(currentTimestamp)
 });
 
-export const conversionFiles = sqliteTable("conversion_files", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const conversionFiles = pgTable("conversion_files", {
+  id: serial("id").primaryKey(),
   conversionId: integer("conversion_id")
     .notNull()
     .references(() => conversions.id, { onDelete: "cascade" }),
@@ -101,13 +112,13 @@ export const conversionFiles = sqliteTable("conversion_files", {
   outputPath: text("output_path"),
   status: text("status").$type<ConversionFileStatus>().notNull().default("uploaded"),
   recordsCount: integer("records_count").notNull().default(0),
-  totalAmount: real("total_amount").notNull().default(0),
+  totalAmount: doublePrecision("total_amount").notNull().default(0),
   createdAt: text("created_at").notNull().default(currentTimestamp),
   updatedAt: text("updated_at").notNull().default(currentTimestamp)
 });
 
-export const conversionObservations = sqliteTable("conversion_observations", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const conversionObservations = pgTable("conversion_observations", {
+  id: serial("id").primaryKey(),
   conversionId: integer("conversion_id")
     .notNull()
     .references(() => conversions.id, { onDelete: "cascade" }),
@@ -122,10 +133,10 @@ export const conversionObservations = sqliteTable("conversion_observations", {
   createdAt: text("created_at").notNull().default(currentTimestamp)
 });
 
-export const settings = sqliteTable(
+export const settings = pgTable(
   "settings",
   {
-    id: integer("id").primaryKey({ autoIncrement: true }),
+    id: serial("id").primaryKey(),
     key: text("key").notNull(),
     value: text("value").notNull(),
     description: text("description"),
@@ -134,27 +145,27 @@ export const settings = sqliteTable(
   (table) => [uniqueIndex("settings_key_unique").on(table.key)]
 );
 
-export const billingCharges = sqliteTable("billing_charges", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const billingCharges = pgTable("billing_charges", {
+  id: serial("id").primaryKey(),
   clientId: integer("client_id")
     .notNull()
     .references(() => clients.id, { onDelete: "restrict" }),
-  period: text("period"), // Can be null if it's a one-off charge not tied to a specific month
+  period: text("period"),
   concept: text("concept").notNull(),
-  totalAmount: real("total_amount").notNull(),
-  status: text("status").notNull().default("pendiente"), // "pendiente", "parcial", "pagado"
+  totalAmount: doublePrecision("total_amount").notNull(),
+  status: text("status").notNull().default("pendiente"),
   createdAt: text("created_at").notNull().default(currentTimestamp),
   updatedAt: text("updated_at").notNull().default(currentTimestamp)
 });
 
-export const billingPayments = sqliteTable("billing_payments", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const billingPayments = pgTable("billing_payments", {
+  id: serial("id").primaryKey(),
   chargeId: integer("charge_id")
     .notNull()
     .references(() => billingCharges.id, { onDelete: "cascade" }),
-  amount: real("amount").notNull(),
-  paymentDate: text("payment_date").notNull(), // ISO date string
-  paymentMethod: text("payment_method").notNull(), // e.g. "Yape", "Transferencia BCP", "Efectivo"
+  amount: doublePrecision("amount").notNull(),
+  paymentDate: text("payment_date").notNull(),
+  paymentMethod: text("payment_method").notNull(),
   notes: text("notes"),
   createdAt: text("created_at").notNull().default(currentTimestamp)
 });

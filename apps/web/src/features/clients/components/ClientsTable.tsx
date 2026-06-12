@@ -53,7 +53,9 @@ export function ClientsTable({
                   <td className="px-5 py-4">
                     <div className="flex justify-end gap-2">
                       <IconButton disabled={!client.active || loading} icon={Eye} label="Ver detalles" onClick={() => onView(client)} tone="purple" />
-                      <IconButton disabled={!client.active || loading} icon={Pencil} label="Editar" onClick={() => onEdit(client)} tone="blue" />
+                      {user.role !== "assistant" && (
+                        <IconButton disabled={!client.active || loading} icon={Pencil} label="Editar" onClick={() => onEdit(client)} tone="blue" />
+                      )}
                       {user.role === "admin" && (
                         client.active ? (
                           <IconButton disabled={loading} icon={Ban} label="Inhabilitar" onClick={() => onToggleClient(client, "disable")} tone="red" />

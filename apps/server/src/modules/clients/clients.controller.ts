@@ -22,6 +22,10 @@ const clientSchema = z.object({
   defaultIgvPercent: z.coerce.number().min(0).max(100).default(18),
   monthlyFee: z.coerce.number().min(0).optional().nullable(),
   hasPlame: z.boolean().default(false),
+  hasAfpnet: z.boolean().default(false),
+  hasItan: z.boolean().default(false),
+  hasDaot: z.boolean().default(false),
+  hasPdt710: z.boolean().default(false),
   salesAccount: z.string().trim().default(""),
   purchasesAccount: z.string().trim().default("")
 });

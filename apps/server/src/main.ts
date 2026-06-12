@@ -14,6 +14,7 @@ import { clientsRoutes } from "./modules/clients/clients.routes.js";
 import { conversionsRoutes } from "./modules/conversions/conversions.routes.js";
 import { dashboardRoutes } from "./modules/dashboard/dashboard.routes.js";
 import { settingsRoutes } from "./modules/settings/settings.routes.js";
+import { obligationsRoutes } from "./modules/obligations/obligations.routes.js";
 
 const app = Fastify({ logger: true });
 
@@ -29,12 +30,20 @@ await app.register(clientsRoutes, { prefix: "/api/clients" });
 await app.register(conversionsRoutes, { prefix: "/api/conversions" });
 await app.register(dashboardRoutes, { prefix: "/api/dashboard" });
 await app.register(settingsRoutes, { prefix: "/api/settings" });
+await app.register(obligationsRoutes, { prefix: "/api/obligations" });
 
 app.get("/api/health", async () => ({
   ok: true,
   app: "SOFTBQ",
   mode: "local"
 }));
+
+app.get("/api/public-settings", async () => {
+  const minVersionRow = await sqlite.prepare("SELECT value FROM settings WHERE key = 'min_version_required'").get() as { value: string } | undefined;
+  return {
+    min_version_required: minVersionRow ? minVersionRow.value : "0.0.0"
+  };
+});
 
 app.get("/api/bootstrap", async () => ({
   users: ["admin", "armando"],
