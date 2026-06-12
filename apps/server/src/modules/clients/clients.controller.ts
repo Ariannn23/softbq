@@ -26,8 +26,11 @@ const clientSchema = z.object({
   hasItan: z.boolean().default(false),
   hasDaot: z.boolean().default(false),
   hasPdt710: z.boolean().default(false),
-  salesAccount: z.string().trim().default(""),
-  purchasesAccount: z.string().trim().default("")
+  hasFinalBeneficiary: z.boolean().default(false),
+  salesBaseAccount: z.string().trim().default(""),
+  salesTotalAccount: z.string().trim().default(""),
+  purchasesBaseAccount: z.string().trim().default(""),
+  purchasesTotalAccount: z.string().trim().default("")
 });
 
 const paramsSchema = z.object({

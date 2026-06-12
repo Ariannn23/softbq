@@ -254,11 +254,13 @@ function buildClientRow(input: {
     hasItan: readMappedCell(input, "hasItan").toUpperCase() === "SI" || readMappedCell(input, "hasItan").toUpperCase() === "SÍ" || readMappedCell(input, "hasItan") === "1",
     hasDaot: readMappedCell(input, "hasDaot").toUpperCase() === "SI" || readMappedCell(input, "hasDaot").toUpperCase() === "SÍ" || readMappedCell(input, "hasDaot") === "1",
     hasPdt710: readMappedCell(input, "hasPdt710").toUpperCase() === "SI" || readMappedCell(input, "hasPdt710").toUpperCase() === "SÍ" || readMappedCell(input, "hasPdt710") === "1",
-    hasFinalBeneficiary: readMappedCell(input, "hasFinalBeneficiary").toUpperCase() === "SI" || readMappedCell(input, "hasFinalBeneficiary").toUpperCase() === "SÍ" || readMappedCell(input, "hasFinalBeneficiary") === "1",
+    hasFinalBeneficiary: readMappedCell(input, "hasFinalBeneficiary").toUpperCase() === "SI" ||
+      readMappedCell(input, "hasFinalBeneficiary").toUpperCase() === "VERDADERO" ||
+      readMappedCell(input, "hasFinalBeneficiary") === "1",
     salesBaseAccount: readMappedCell(input, "salesBaseAccount") || "",
-    salesTotalAccount: readMappedCell(input, "salesTotalAccount") || "",
+    salesTotalAccount: readMappedCell(input, "salesTotalAccount") || "1212",
     purchasesBaseAccount: readMappedCell(input, "purchasesBaseAccount") || "",
-    purchasesTotalAccount: readMappedCell(input, "purchasesTotalAccount") || ""
+    purchasesTotalAccount: readMappedCell(input, "purchasesTotalAccount") || "4212"
   };
 }
 
