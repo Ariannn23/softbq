@@ -43,11 +43,11 @@ export async function processConversionJob(data: ConversionJobData) {
   await fs.mkdir(outputDir, { recursive: true });
 
   // 1. Fetch client info
-  const clientData = await db
+  const [clientData] = await db
     .select()
     .from(clients)
     .where(eq(clients.id, data.clientId))
-    .get();
+    .limit(1);
 
   if (!clientData) {
     throw new Error(`Cliente no encontrado: ${data.clientId}`);
@@ -289,7 +289,7 @@ export async function processConversionJob(data: ConversionJobData) {
     const { and, sql } = await import("drizzle-orm");
     
     const [existing] = await db.select().from(clientPeriods)
-      .where(and(eq(clientPeriods.clientId, data.clientId), eq(clientPeriods.period, data.period)));
+      .where(and(eq(clientPeriods.clientId, data.clientId), eq(clientPeriods.period, data.period))).limit(1);
       
     if (existing) {
       await db.update(clientPeriods)

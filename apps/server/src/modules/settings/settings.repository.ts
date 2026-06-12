@@ -23,7 +23,8 @@ export async function updateSettings(newSettings: Record<string, string>) {
     for (const key of keys) {
       const value = newSettings[key] as string;
       // Insert or replace essentially
-      const existing = await tx.select().from(settings).where(eq(settings.key, key)).get();
+      const existingRecords = await tx.select().from(settings).where(eq(settings.key, key)).limit(1);
+      const existing = existingRecords[0];
       if (existing) {
         await tx.update(settings).set({ value, updatedAt: new Date().toISOString() }).where(eq(settings.key, key));
       } else {

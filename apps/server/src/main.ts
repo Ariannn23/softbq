@@ -6,7 +6,8 @@ import fastifyStatic from "@fastify/static";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { sqlite } from "@softbq/db";
+import { db, settings } from "@softbq/db";
+import { eq } from "drizzle-orm";
 
 import { authRoutes } from "./modules/auth/auth.routes.js";
 import { billingRoutes } from "./modules/billing/billing.routes.js";
@@ -39,7 +40,11 @@ app.get("/api/health", async () => ({
 }));
 
 app.get("/api/public-settings", async () => {
-  const minVersionRow = await sqlite.prepare("SELECT value FROM settings WHERE key = 'min_version_required'").get() as { value: string } | undefined;
+  const [minVersionRow] = await db
+    .select({ value: settings.value })
+    .from(settings)
+    .where(eq(settings.key, "min_version_required"))
+    .limit(1);
   return {
     min_version_required: minVersionRow ? minVersionRow.value : "0.0.0"
   };

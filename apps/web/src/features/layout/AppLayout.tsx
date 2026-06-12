@@ -106,7 +106,7 @@ export function AppLayout({
             </button>
             {!isCompact && (
               <div className="text-center text-xs text-white/50 font-medium tracking-wide">
-                Última versión v0.1.10
+                Última versión v0.1.11
               </div>
             )}
           </div>
