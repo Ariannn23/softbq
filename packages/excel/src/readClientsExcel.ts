@@ -15,8 +15,11 @@ export type ClientImportField =
   | "hasItan"
   | "hasDaot"
   | "hasPdt710"
-  | "salesAccount"
-  | "purchasesAccount";
+  | "hasFinalBeneficiary"
+  | "salesBaseAccount"
+  | "salesTotalAccount"
+  | "purchasesBaseAccount"
+  | "purchasesTotalAccount";
 
 export type ClientImportMapping = Partial<Record<ClientImportField, string>>;
 
@@ -35,8 +38,11 @@ export type ClientImportRow = {
   hasItan: boolean;
   hasDaot: boolean;
   hasPdt710: boolean;
-  salesAccount: string;
-  purchasesAccount: string;
+  hasFinalBeneficiary: boolean;
+  salesBaseAccount: string;
+  salesTotalAccount: string;
+  purchasesBaseAccount: string;
+  purchasesTotalAccount: string;
 };
 
 export type ClientImportIssue = {
@@ -80,8 +86,11 @@ const fieldAliases: Record<ClientImportField, string[]> = {
   hasItan: ["tiene itan", "itan", "declara itan"],
   hasDaot: ["tiene daot", "daot", "declara daot"],
   hasPdt710: ["tiene pdt", "pdt 710", "declara pdt 710"],
-  salesAccount: ["cuenta de ventas", "cuenta ventas"],
-  purchasesAccount: ["cuenta de compras", "cuenta compras"]
+  hasFinalBeneficiary: ["tiene benif", "tiene benef", "declara benif", "beneficiario final", "declara beneficiario final", "benif final", "benif. final"],
+  salesBaseAccount: ["cuenta de ventas base", "cuenta ventas base", "ventas base"],
+  salesTotalAccount: ["cuenta venta total", "cuenta de venta total", "venta total"],
+  purchasesBaseAccount: ["cuenta de compras base", "cuenta compras base", "compras base"],
+  purchasesTotalAccount: ["cuenta compra total", "cuenta de compra total", "compra total"]
 };
 
 const requiredFields: ClientImportField[] = ["ruc", "businessName"];
@@ -245,8 +254,11 @@ function buildClientRow(input: {
     hasItan: readMappedCell(input, "hasItan").toUpperCase() === "SI" || readMappedCell(input, "hasItan").toUpperCase() === "SÍ" || readMappedCell(input, "hasItan") === "1",
     hasDaot: readMappedCell(input, "hasDaot").toUpperCase() === "SI" || readMappedCell(input, "hasDaot").toUpperCase() === "SÍ" || readMappedCell(input, "hasDaot") === "1",
     hasPdt710: readMappedCell(input, "hasPdt710").toUpperCase() === "SI" || readMappedCell(input, "hasPdt710").toUpperCase() === "SÍ" || readMappedCell(input, "hasPdt710") === "1",
-    salesAccount: readMappedCell(input, "salesAccount") || "",
-    purchasesAccount: readMappedCell(input, "purchasesAccount") || ""
+    hasFinalBeneficiary: readMappedCell(input, "hasFinalBeneficiary").toUpperCase() === "SI" || readMappedCell(input, "hasFinalBeneficiary").toUpperCase() === "SÍ" || readMappedCell(input, "hasFinalBeneficiary") === "1",
+    salesBaseAccount: readMappedCell(input, "salesBaseAccount") || "",
+    salesTotalAccount: readMappedCell(input, "salesTotalAccount") || "",
+    purchasesBaseAccount: readMappedCell(input, "purchasesBaseAccount") || "",
+    purchasesTotalAccount: readMappedCell(input, "purchasesTotalAccount") || ""
   };
 }
 

@@ -74,17 +74,35 @@ export function ClientDetailsModal({
           </div>
 
           <div>
-            <span className="block text-xs font-semibold uppercase text-slate-500 mb-1">Cuenta de Ventas</span>
-            <p className="font-mono text-slate-800">{client.salesAccount || "-"}</p>
+            <span className="block text-xs font-semibold uppercase text-slate-500 mb-1">Cuenta de Ventas Base</span>
+            <p className="font-mono text-slate-800">{client.salesBaseAccount || "-"}</p>
           </div>
           <div>
-            <span className="block text-xs font-semibold uppercase text-slate-500 mb-1">Cuenta de Compras</span>
-            <p className="font-mono text-slate-800">{client.purchasesAccount || "-"}</p>
+            <span className="block text-xs font-semibold uppercase text-slate-500 mb-1">Cuenta Venta Total</span>
+            <p className="font-mono text-slate-800">{client.salesTotalAccount || "-"}</p>
+          </div>
+          <div>
+            <span className="block text-xs font-semibold uppercase text-slate-500 mb-1">Cuenta de Compras Base</span>
+            <p className="font-mono text-slate-800">{client.purchasesBaseAccount || "-"}</p>
+          </div>
+          <div>
+            <span className="block text-xs font-semibold uppercase text-slate-500 mb-1">Cuenta Compra Total</span>
+            <p className="font-mono text-slate-800">{client.purchasesTotalAccount || "-"}</p>
           </div>
           <div>
             <span className="block text-xs font-semibold uppercase text-slate-500 mb-1">Declara PLAME</span>
             <p className="text-slate-800">
               {client.hasPlame ? (
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-indigo-100 text-indigo-800">SÍ</span>
+              ) : (
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-600">NO</span>
+              )}
+            </p>
+          </div>
+          <div>
+            <span className="block text-xs font-semibold uppercase text-slate-500 mb-1">Declara Benif. Final</span>
+            <p className="text-slate-800">
+              {client.hasFinalBeneficiary ? (
                 <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-indigo-100 text-indigo-800">SÍ</span>
               ) : (
                 <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-600">NO</span>

@@ -16,11 +16,14 @@ async function generate() {
     { header: "Honorarios mensuales", key: "monthlyFee", width: 20 },
     { header: "Declara PLAME", key: "hasPlame", width: 15 },
     { header: "Declara AFPNET", key: "hasAfpnet", width: 15 },
+    { header: "Declara Benif. Final", key: "hasFinalBeneficiary", width: 20 },
     { header: "Declara ITAN", key: "hasItan", width: 15 },
     { header: "Declara DAOT", key: "hasDaot", width: 15 },
-    { header: "Declara PDT 710", key: "hasPdt710", width: 15 },
-    { header: "Cuenta de Ventas", key: "salesAccount", width: 20 },
-    { header: "Cuenta de Compras", key: "purchasesAccount", width: 20 }
+    { header: "Declara PDT 710 Anual", key: "hasPdt710", width: 20 },
+    { header: "Cuenta de Ventas Base", key: "salesBaseAccount", width: 25 },
+    { header: "Cuenta Venta total", key: "salesTotalAccount", width: 20 },
+    { header: "Cuenta de Compras Base", key: "purchasesBaseAccount", width: 25 },
+    { header: "Cuenta Compra total", key: "purchasesTotalAccount", width: 20 }
   ];
 
   sheet.getRow(1).font = { bold: true };

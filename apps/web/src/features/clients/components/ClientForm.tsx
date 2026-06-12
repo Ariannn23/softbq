@@ -30,8 +30,10 @@ export function ClientForm({
         <ClientField form={form} label="Código de pago" name="defaultPaymentMethod" />
         <ClientField form={form} inputMode="decimal" label="IGV" name="defaultIgvPercent" step="0.01" type="number" />
         <ClientField form={form} inputMode="decimal" label="Honorarios" name="monthlyFee" step="0.01" type="number" />
-        <ClientField form={form} label="Cuenta de ventas" name="salesAccount" />
-        <ClientField form={form} label="Cuenta de compras" name="purchasesAccount" />
+        <ClientField form={form} label="Cuenta de ventas base" name="salesBaseAccount" />
+        <ClientField form={form} label="Cuenta venta total" name="salesTotalAccount" />
+        <ClientField form={form} label="Cuenta de compras base" name="purchasesBaseAccount" />
+        <ClientField form={form} label="Cuenta compra total" name="purchasesTotalAccount" />
         
         <div className="flex flex-col gap-1">
           <label className="text-[13px] font-semibold uppercase text-slate-500">¿Declara PLAME?</label>
@@ -84,6 +86,17 @@ export function ClientForm({
               type="checkbox"
               className="peer sr-only"
               {...form.register("hasPdt710")}
+            />
+            <div className="peer h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
+          </label>
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-[13px] font-semibold uppercase text-slate-500">¿Declara Benif. Final?</label>
+          <label className="relative inline-flex cursor-pointer items-center mt-2">
+            <input
+              type="checkbox"
+              className="peer sr-only"
+              {...form.register("hasFinalBeneficiary")}
             />
             <div className="peer h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
           </label>

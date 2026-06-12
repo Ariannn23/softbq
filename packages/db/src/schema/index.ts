@@ -54,8 +54,11 @@ export const clients = pgTable(
     hasItan: boolean("has_itan").notNull().default(false),
     hasDaot: boolean("has_daot").notNull().default(false),
     hasPdt710: boolean("has_pdt_710").notNull().default(false),
-    salesAccount: text("sales_account").notNull().default(""),
-    purchasesAccount: text("purchases_account").notNull().default(""),
+    hasFinalBeneficiary: boolean("has_final_beneficiary").notNull().default(false),
+    salesBaseAccount: text("sales_base_account").notNull().default(""),
+    salesTotalAccount: text("sales_total_account").notNull().default(""),
+    purchasesBaseAccount: text("purchases_base_account").notNull().default(""),
+    purchasesTotalAccount: text("purchases_total_account").notNull().default(""),
     createdAt: text("created_at").notNull().default(currentTimestamp),
     updatedAt: text("updated_at").notNull().default(currentTimestamp)
   },

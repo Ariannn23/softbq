@@ -24,8 +24,11 @@ export const clientSchema = z.object({
   hasItan: z.boolean(),
   hasDaot: z.boolean(),
   hasPdt710: z.boolean(),
-  salesAccount: z.string().trim(),
-  purchasesAccount: z.string().trim(),
+  hasFinalBeneficiary: z.boolean(),
+  salesBaseAccount: z.string().trim(),
+  salesTotalAccount: z.string().trim(),
+  purchasesBaseAccount: z.string().trim(),
+  purchasesTotalAccount: z.string().trim(),
 });
 
 export type LoginValues = z.infer<typeof loginSchema>;
@@ -95,8 +98,11 @@ export const emptyClient: ClientValues = {
   hasItan: false,
   hasDaot: false,
   hasPdt710: false,
-  salesAccount: "",
-  purchasesAccount: "",
+  hasFinalBeneficiary: false,
+  salesBaseAccount: "",
+  salesTotalAccount: "",
+  purchasesBaseAccount: "",
+  purchasesTotalAccount: "",
 };
 
 export const importFields: Array<{
@@ -117,7 +123,10 @@ export const importFields: Array<{
   { key: "hasAfpnet", label: "Declara AFPNET" },
   { key: "hasItan", label: "Declara ITAN" },
   { key: "hasDaot", label: "Declara DAOT" },
-  { key: "hasPdt710", label: "Declara PDT 710" },
-  { key: "salesAccount", label: "Cuenta de Ventas" },
-  { key: "purchasesAccount", label: "Cuenta de Compras" },
+  { key: "hasPdt710", label: "Declara PDT 710 Anual" },
+  { key: "hasFinalBeneficiary", label: "Declara Benif. Final" },
+  { key: "salesBaseAccount", label: "Cuenta de Ventas Base" },
+  { key: "salesTotalAccount", label: "Cuenta Venta total" },
+  { key: "purchasesBaseAccount", label: "Cuenta de Compras Base" },
+  { key: "purchasesTotalAccount", label: "Cuenta Compra total" },
 ];
