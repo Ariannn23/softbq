@@ -34,8 +34,11 @@ export type ClientInput = {
   hasItan?: boolean;
   hasDaot?: boolean;
   hasPdt710?: boolean;
-  salesAccount?: string;
-  purchasesAccount?: string;
+  hasFinalBeneficiary?: boolean;
+  salesBaseAccount?: string;
+  salesTotalAccount?: string;
+  purchasesBaseAccount?: string;
+  purchasesTotalAccount?: string;
 };
 
 function ensureClientPermission(user: AuthenticatedUser | undefined) {
@@ -80,8 +83,11 @@ function toClient(record: Awaited<ReturnType<typeof findClientById>>): Client {
     hasItan: record.hasItan,
     hasDaot: record.hasDaot,
     hasPdt710: record.hasPdt710,
-    salesAccount: record.salesAccount,
-    purchasesAccount: record.purchasesAccount,
+    hasFinalBeneficiary: record.hasFinalBeneficiary,
+    salesBaseAccount: record.salesBaseAccount,
+    salesTotalAccount: record.salesTotalAccount,
+    purchasesBaseAccount: record.purchasesBaseAccount,
+    purchasesTotalAccount: record.purchasesTotalAccount,
     createdAt: record.createdAt,
     updatedAt: record.updatedAt
   };
@@ -103,8 +109,11 @@ function normalizeClientInput(input: ClientInput): ClientInput {
     hasItan: input.hasItan ?? false,
     hasDaot: input.hasDaot ?? false,
     hasPdt710: input.hasPdt710 ?? false,
-    salesAccount: input.salesAccount?.trim() ?? "",
-    purchasesAccount: input.purchasesAccount?.trim() ?? ""
+    hasFinalBeneficiary: input.hasFinalBeneficiary ?? false,
+    salesBaseAccount: input.salesBaseAccount?.trim() ?? "",
+    salesTotalAccount: input.salesTotalAccount?.trim() ?? "",
+    purchasesBaseAccount: input.purchasesBaseAccount?.trim() ?? "",
+    purchasesTotalAccount: input.purchasesTotalAccount?.trim() ?? ""
   };
 }
 
