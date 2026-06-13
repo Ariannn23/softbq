@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Check } from 'lucide-react';
+import { ChevronDown, Check, X } from 'lucide-react';
 
 interface Client {
   id: number;
@@ -55,15 +55,27 @@ export function ClientCombobox({ clients, value, onChange, placeholder = "-- Sel
 
       {isOpen && (
         <div className="absolute z-50 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-          <div className="sticky top-0 z-10 bg-white px-3 py-2 border-b border-slate-100">
+          <div className="sticky top-0 z-10 bg-white px-3 py-2 border-b border-slate-100 relative">
             <input
               type="text"
-              className="w-full border-slate-300 rounded-md py-1.5 px-3 text-sm focus:ring-blue-500 focus:border-blue-500 border"
+              className="w-full border-slate-300 rounded-md py-1.5 pl-3 pr-8 text-sm focus:ring-blue-500 focus:border-blue-500 border outline-none"
               placeholder="Buscar por RUC o nombre..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onClick={(e) => e.stopPropagation()}
             />
+            {search && (
+              <button
+                className="absolute right-5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSearch("");
+                }}
+                type="button"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
           
           {filteredClients.length === 0 ? (

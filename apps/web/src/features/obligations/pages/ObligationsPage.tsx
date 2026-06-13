@@ -6,8 +6,10 @@ import {
   AlertCircle,
   Search,
   RefreshCcw,
-  FileCheck
-} from "lucide-react";
+  FileCheck,
+  X,
+  CheckCircle2,
+  Clock
 import {
   getObligationsData,
   updateObligationStatus,
@@ -123,6 +125,22 @@ export function ObligationsPage() {
     return filteredClients.slice(start, start + limit);
   }, [filteredClients, page, limit]);
 
+  const kpis = useMemo(() => {
+    if (!data) return null;
+    const calc = (hasField: keyof ObligationClient, decField: keyof ObligationClient) => {
+      const total = data.clients.filter(c => c[hasField]).length;
+      const hechas = data.clients.filter(c => c[hasField] && c[decField]).length;
+      return { total, hechas, pendientes: total - hechas };
+    };
+    return {
+      plame: calc("hasPlame", "plameDeclared"),
+      afpnet: calc("hasAfpnet", "afpnetDeclared"),
+      itan: calc("hasItan", "itanDeclared"),
+      daot: calc("hasDaot", "daotDeclared"),
+      pdt710: calc("hasPdt710", "pdt710Declared"),
+    };
+  }, [data]);
+
   const renderCheckbox = (client: ObligationClient, requiredField: keyof ObligationClient, declaredField: keyof ObligationClient) => {
     const isRequired = client[requiredField] as boolean;
     const isDeclared = client[declaredField] as boolean;
@@ -195,10 +213,10 @@ export function ObligationsPage() {
               setSelectedYear(d.getFullYear());
             }}
             className="flex items-center justify-center gap-2 px-4 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-md transition-colors"
-            title="Mes actual"
+            title="Limpiar"
           >
             <RefreshCcw className="w-4 h-4" />
-            Mes actual
+            Limpiar
           </button>
         </div>
       </div>
@@ -214,6 +232,42 @@ export function ObligationsPage() {
         </div>
       ) : data ? (
         <div className={`space-y-6 transition-opacity duration-200 ${isLoading ? "opacity-50 pointer-events-none" : ""}`}>
+          
+          {/* KPIs Section */}
+          {kpis && (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {[
+                { title: "PLAME", data: kpis.plame },
+                { title: "AFPNET", data: kpis.afpnet },
+                { title: "ITAN", data: kpis.itan },
+                { title: "DAOT", data: kpis.daot },
+                { title: "PDT 710", data: kpis.pdt710 },
+              ].map((kpi) => (
+                <div key={kpi.title} className="bg-white rounded-lg border border-slate-200 p-4 shadow-sm">
+                  <div className="text-sm font-semibold text-slate-600 mb-3">{kpi.title}</div>
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                      <span className="w-2 h-2 rounded-full bg-slate-300"></span>
+                      Total: {kpi.data.total}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-emerald-50 rounded px-2 py-1.5 flex flex-col justify-center items-center">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 mb-0.5" />
+                      <span className="text-[10px] uppercase font-bold text-emerald-700 tracking-wider">Hechas</span>
+                      <span className="text-sm font-bold text-emerald-800">{kpi.data.hechas}</span>
+                    </div>
+                    <div className="bg-orange-50 rounded px-2 py-1.5 flex flex-col justify-center items-center">
+                      <Clock className="w-3.5 h-3.5 text-orange-500 mb-0.5" />
+                      <span className="text-[10px] uppercase font-bold text-orange-700 tracking-wider">Pends</span>
+                      <span className="text-sm font-bold text-orange-800">{kpi.data.pendientes}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
             <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <h2 className="font-semibold text-slate-800 text-lg">
@@ -230,8 +284,17 @@ export function ObligationsPage() {
                     placeholder="Buscar cliente..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-9 pr-3 py-1.5 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full pl-9 pr-8 py-1.5 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
+                  {searchTerm && (
+                    <button
+                      className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+                      onClick={() => setSearchTerm("")}
+                      type="button"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

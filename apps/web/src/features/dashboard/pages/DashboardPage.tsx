@@ -21,6 +21,7 @@ import {
   Filter,
   RefreshCcw,
   ArrowRightLeft,
+  X,
 } from "lucide-react";
 import {
   getDashboardData,
@@ -342,8 +343,17 @@ export function DashboardPage({ clientsVersion }: { clientsVersion?: number }) {
                     placeholder="Buscar cliente..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-9 pr-3 py-1.5 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full pl-9 pr-8 py-1.5 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
+                  {searchTerm && (
+                    <button
+                      className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+                      onClick={() => setSearchTerm("")}
+                      type="button"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

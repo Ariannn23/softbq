@@ -414,8 +414,17 @@ export function BillingPage() {
                   placeholder="Buscar cliente..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm w-full sm:w-[300px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className="pl-9 pr-8 py-2 border border-slate-300 rounded-lg text-sm w-full sm:w-[300px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                 />
+                {searchTerm && (
+                  <button
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+                    onClick={() => setSearchTerm("")}
+                    type="button"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             </div>
 
