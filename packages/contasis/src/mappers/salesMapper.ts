@@ -14,7 +14,8 @@ export type ContasisSalesClientConfig = {
   defaultCondition: string;
   defaultIgvPercent: number;
   defaultPaymentMethod: string;
-  salesAccount: string;
+  salesBaseAccount: string;
+  salesTotalAccount: string;
 };
 
 export type MapSalesToContasisInput = {
@@ -62,10 +63,10 @@ function mapSaleToContasisRow(
   row.ccond = client.defaultCondition;
   row.ccodcos = "";
   row.ccodcos2 = "";
-  row.cctabase = client.salesAccount;
+  row.cctabase = client.salesBaseAccount;
   row.cctaicbper = "";
   row.cctaotrib = "";
-  row.cctatot = "1212";
+  row.cctatot = client.salesTotalAccount;
   row.nresp = "";
   row.nporre = "";
   row.nimpres = "";

@@ -1,7 +1,7 @@
 {
   "name": "softbq",
   "private": true,
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "SOFTBQ - Convertidor local de SIRE SUNAT a formatos Contasis SQL.",
   "author": "Grupo BQ",
   "main": "electron/main.cjs",

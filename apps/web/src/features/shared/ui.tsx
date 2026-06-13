@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 
 export function BrandMark({
   dark = false,
@@ -40,11 +40,23 @@ export function SearchBox({
     <label className="relative block w-full">
       <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#53698d]" />
       <input
-        className="h-11 w-full rounded-md border border-[#c9dbef] bg-white pl-12 pr-4 text-sm outline-none focus:border-[#0aa0ed]"
+        className="h-11 w-full rounded-md border border-[#c9dbef] bg-white pl-12 pr-10 text-sm outline-none focus:border-[#0aa0ed]"
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         value={value}
       />
+      {value && (
+        <button
+          className="absolute right-3 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full text-[#53698d] hover:bg-slate-100 hover:text-slate-800 transition-colors"
+          onClick={(e) => {
+            e.preventDefault();
+            onChange("");
+          }}
+          type="button"
+        >
+          <X size={14} />
+        </button>
+      )}
     </label>
   );
 }

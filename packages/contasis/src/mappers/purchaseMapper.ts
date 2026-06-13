@@ -15,7 +15,8 @@ export type ContasisPurchaseClientConfig = {
   defaultGoodsServicesClassification: string;
   defaultIgvPercent: number;
   defaultPaymentMethod: string;
-  purchasesAccount: string;
+  purchasesBaseAccount: string;
+  purchasesTotalAccount: string;
 };
 
 export type MapPurchasesToContasisInput = {
@@ -74,10 +75,10 @@ function mapPurchaseToContasisRow(
   row.ndolar = purchase.currency === "USD" ? purchase.exchangeRate : "";
   row.ffechaven2 = purchase.issueDate;
   row.ccond = client.defaultCondition;
-  row.cctabase = client.purchasesAccount;
+  row.cctabase = client.purchasesBaseAccount;
   row.cctaicbper = "";
   row.cctaotrib = "";
-  row.cctatot = "";
+  row.cctatot = client.purchasesTotalAccount;
   row.ccodcos = "";
   row.ccodcos2 = "";
   row.nresp = "";
