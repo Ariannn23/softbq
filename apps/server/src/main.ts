@@ -6,7 +6,7 @@ import fastifyStatic from "@fastify/static";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { db, settings } from "@softbq/db";
+import { db, queryClient, settings } from "@softbq/db";
 import { eq } from "drizzle-orm";
 
 import { authRoutes } from "./modules/auth/auth.routes.js";
@@ -76,7 +76,7 @@ const port = Number(process.env.PORT ?? 3001);
 const host = process.env.HOST ?? "0.0.0.0";
 
 const closeDatabase = async () => {
-  sqlite.close();
+  await queryClient.end();
 };
 
 app.addHook("onClose", closeDatabase);

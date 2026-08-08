@@ -1,6 +1,6 @@
 import { db } from "@softbq/db";
 import { billingCharges, billingPayments, clients } from "@softbq/db";
-import { eq, and, sql, desc, asc } from "drizzle-orm";
+import { eq, and, sql, desc, inArray } from "drizzle-orm";
 
 export async function getBillingCharges(period?: string) {
   const query = db
@@ -137,7 +137,7 @@ export async function getClientChargeForPeriod(clientId: number, period: string)
 }
 
 export async function getBillingHistoryByClientId(clientId: number) {
-  const query = db
+  const charges = await db
     .select({
       id: billingCharges.id,
       period: billingCharges.period,
@@ -146,20 +146,7 @@ export async function getBillingHistoryByClientId(clientId: number) {
       status: billingCharges.status,
       createdAt: billingCharges.createdAt,
       updatedAt: billingCharges.updatedAt,
-      paidAmount: sql<number>`COALESCE(SUM(${billingPayments.amount}), 0)`,
-      payments: sql<string>`
-        COALESCE(
-          json_group_array(
-            json_object(
-              'id', ${billingPayments.id},
-              'amount', ${billingPayments.amount},
-              'date', ${billingPayments.paymentDate},
-              'method', ${billingPayments.paymentMethod}
-            )
-          ) FILTER (WHERE ${billingPayments.id} IS NOT NULL),
-          '[]'
-        )
-      `
+      paidAmount: sql<number>`COALESCE(SUM(${billingPayments.amount}), 0)`
     })
     .from(billingCharges)
     .leftJoin(billingPayments, eq(billingCharges.id, billingPayments.chargeId))
@@ -175,10 +162,41 @@ export async function getBillingHistoryByClientId(clientId: number) {
     )
     .orderBy(desc(billingCharges.createdAt));
 
-  const records = await query;
-  
-  return records.map(record => ({
-    ...record,
-    payments: JSON.parse(record.payments) as Array<{id: number, amount: number, date: string, method: string}>
+  if (charges.length === 0) {
+    return [];
+  }
+
+  const chargeIds = charges.map((charge) => charge.id);
+  const payments = await db
+    .select({
+      id: billingPayments.id,
+      chargeId: billingPayments.chargeId,
+      amount: billingPayments.amount,
+      date: billingPayments.paymentDate,
+      method: billingPayments.paymentMethod
+    })
+    .from(billingPayments)
+    .where(inArray(billingPayments.chargeId, chargeIds))
+    .orderBy(desc(billingPayments.paymentDate), desc(billingPayments.id));
+
+  const paymentsByChargeId = new Map<
+    number,
+    Array<{ id: number; amount: number; date: string; method: string }>
+  >();
+
+  for (const payment of payments) {
+    const existingPayments = paymentsByChargeId.get(payment.chargeId) ?? [];
+    existingPayments.push({
+      id: payment.id,
+      amount: payment.amount,
+      date: payment.date,
+      method: payment.method
+    });
+    paymentsByChargeId.set(payment.chargeId, existingPayments);
+  }
+
+  return charges.map((charge) => ({
+    ...charge,
+    payments: paymentsByChargeId.get(charge.id) ?? []
   }));
 }

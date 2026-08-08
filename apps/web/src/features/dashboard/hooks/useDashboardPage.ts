@@ -1,58 +1,111 @@
-import { Calendar, CheckCircle, Eye, FileSpreadsheet, Files, Users } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "react-hot-toast";
 
-import type { Client } from "../../shared/types";
-import { fetchClients } from "../../clients/services/clientsApi";
+import {
+  type ClientPeriodStatus,
+  type DashboardResponse,
+  getDashboardData,
+  updateClientPeriodStatus,
+} from "../services/dashboardApi";
 
-export function useDashboardPage(clientsVersion: number) {
-  const [clients, setClients] = useState<Client[]>([]);
-  const [dashboardSearch, setDashboardSearch] = useState("");
-  const [loading, setLoading] = useState(true);
-  const activeClients = clients.filter((client) => client.active).length;
-  const inactiveClients = clients.length - activeClients;
-  const filteredClients = useMemo(() => {
-    const search = dashboardSearch.trim().toLowerCase();
+export function useDashboardPage({ clientsVersion }: { clientsVersion?: number }) {
+  const currentDate = new Date();
+  const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
+  const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
+  const [data, setData] = useState<DashboardResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
-    if (!search) {
-      return clients;
+  const period = `${selectedYear}${selectedMonth.toString().padStart(2, "0")}`;
+
+  const years = useMemo(() => {
+    const year = new Date().getFullYear();
+    return Array.from({ length: 5 }).map((_, index) => year - index);
+  }, []);
+
+  const loadData = useCallback(async () => {
+    setIsLoading(true);
+    setIsError(false);
+    try {
+      const response = await getDashboardData(period);
+      setData(response);
+    } catch (error) {
+      setIsError(true);
+    } finally {
+      setIsLoading(false);
     }
-
-    return clients.filter((client) =>
-      client.ruc.includes(search) ||
-      client.businessName.toLowerCase().includes(search) ||
-      client.shortName.toLowerCase().includes(search)
-    );
-  }, [clients, dashboardSearch]);
-  const metrics = [
-    { label: "Clientes activos", value: activeClients, help: "Total de clientes", icon: Users, tone: "blue" },
-    { label: "Pendientes", value: activeClients, help: "Clientes pendientes", icon: Calendar, tone: "orange" },
-    { label: "Ventas procesadas", value: 0, help: "Ventas cargadas", icon: FileSpreadsheet, tone: "green" },
-    { label: "Compras procesadas", value: 0, help: "Compras cargadas", icon: Files, tone: "purple" },
-    { label: "Archivos generados", value: 0, help: "Archivos generados", icon: Files, tone: "teal" },
-    { label: "Clientes revisados", value: 0, help: "Clientes revisados", icon: Eye, tone: "blue" },
-    { label: "Clientes declarados", value: 0, help: "Clientes declarados", icon: CheckCircle, tone: "green" }
-  ] as const;
+  }, [period, clientsVersion]);
 
   useEffect(() => {
-    async function loadClients() {
-      setLoading(true);
+    const handleClickOutside = () => setOpenMenuId(null);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
-      try {
-        setClients(await fetchClients());
-      } finally {
-        setLoading(false);
-      }
+  useEffect(() => {
+    void loadData();
+    setPage(1);
+  }, [loadData]);
+
+  const filteredClients = useMemo(() => {
+    if (!data) return [];
+    const normalizedSearch = searchTerm.toLowerCase();
+    return data.clients.filter(
+      (client) => client.businessName.toLowerCase().includes(normalizedSearch) || client.ruc.includes(searchTerm),
+    );
+  }, [data, searchTerm]);
+
+  const paginatedClients = useMemo(() => {
+    const start = (page - 1) * limit;
+    return filteredClients.slice(start, start + limit);
+  }, [filteredClients, page, limit]);
+
+  const resetPeriod = () => {
+    const date = new Date();
+    setSelectedMonth(date.getMonth() + 1);
+    setSelectedYear(date.getFullYear());
+  };
+
+  const handleStatusChange = async (clientId: number, newStatus: ClientPeriodStatus) => {
+    setUpdatingId(clientId);
+    const toastId = toast.loading("Actualizando estado...");
+    try {
+      await updateClientPeriodStatus(clientId, period, newStatus);
+      await loadData();
+      toast.success("Estado actualizado exitosamente", { id: toastId });
+    } catch (error) {
+      toast.error("Error al actualizar el estado", { id: toastId });
+    } finally {
+      setUpdatingId(null);
     }
-
-    void loadClients();
-  }, [clientsVersion]);
+  };
 
   return {
-    dashboardSearch,
+    selectedMonth,
+    setSelectedMonth,
+    selectedYear,
+    setSelectedYear,
+    years,
+    data,
+    isLoading,
+    isError,
+    updatingId,
+    openMenuId,
+    setOpenMenuId,
+    searchTerm,
+    setSearchTerm,
+    page,
+    setPage,
+    limit,
+    setLimit,
     filteredClients,
-    inactiveClients,
-    loading,
-    metrics,
-    setDashboardSearch
+    paginatedClients,
+    resetPeriod,
+    handleStatusChange,
   };
 }

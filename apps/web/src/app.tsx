@@ -1,24 +1,26 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useNavigate } from "react-router-dom";
 
 import { LoginPage, LoginSkeleton } from "./features/auth/LoginPage";
-import { ClientsPage } from "./features/clients/ClientsPage";
-import { ImportClientsPage } from "./features/clients/ImportClientsPage";
-import { DashboardPage } from "./features/dashboard/DashboardPage";
 import { AppLayout } from "./features/layout/AppLayout";
-import { ConversionsPage } from "./features/conversions/pages/ConversionsPage";
-import { NewConversionPage } from "./features/conversions/pages/NewConversionPage";
-import { ValidationPreviewPage } from "./features/conversions/pages/ValidationPreviewPage";
-import { ConversionResultPage } from "./features/conversions/pages/ConversionResultPage";
-import { BillingPage } from "./features/billing/pages/BillingPage";
-import { BillingHistoryPage } from "./features/billing/pages/BillingHistoryPage";
-import { SettingsPage } from "./features/settings/pages/SettingsPage";
-import { ObligationsPage } from "./features/obligations/pages/ObligationsPage";
-import type { LoginValues, SessionUser } from "./features/shared/types";
+import type { LoginValues } from "./features/auth/types";
+import type { SessionUser } from "./features/shared/types";
 import { fetchSession, login, logout } from "./features/auth/services/authApi";
 import { BlockingUpdateOverlay } from "./features/layout/BlockingUpdateOverlay";
 import { isVersionOlder } from "./lib/version";
+
+const DashboardPage = lazy(() => import("./features/dashboard/DashboardPage").then((module) => ({ default: module.DashboardPage })));
+const ClientsPage = lazy(() => import("./features/clients/ClientsPage").then((module) => ({ default: module.ClientsPage })));
+const ImportClientsPage = lazy(() => import("./features/clients/ImportClientsPage").then((module) => ({ default: module.ImportClientsPage })));
+const ConversionsPage = lazy(() => import("./features/conversions/pages/ConversionsPage").then((module) => ({ default: module.ConversionsPage })));
+const NewConversionPage = lazy(() => import("./features/conversions/pages/NewConversionPage").then((module) => ({ default: module.NewConversionPage })));
+const ValidationPreviewPage = lazy(() => import("./features/conversions/pages/ValidationPreviewPage").then((module) => ({ default: module.ValidationPreviewPage })));
+const ConversionResultPage = lazy(() => import("./features/conversions/pages/ConversionResultPage").then((module) => ({ default: module.ConversionResultPage })));
+const BillingPage = lazy(() => import("./features/billing/pages/BillingPage").then((module) => ({ default: module.BillingPage })));
+const BillingHistoryPage = lazy(() => import("./features/billing/pages/BillingHistoryPage").then((module) => ({ default: module.BillingHistoryPage })));
+const SettingsPage = lazy(() => import("./features/settings/pages/SettingsPage").then((module) => ({ default: module.SettingsPage })));
+const ObligationsPage = lazy(() => import("./features/obligations/pages/ObligationsPage").then((module) => ({ default: module.ObligationsPage })));
 
 export function App() {
   return (
@@ -87,40 +89,42 @@ function AppRoutes() {
   }
 
   return (
-    <Routes>
-      <Route element={<AppLayout onLogout={() => void handleLogout()} user={user} />}>
-        <Route index element={<Navigate replace to="/dashboard" />} />
-        <Route path="/dashboard" element={<DashboardPage clientsVersion={clientsVersion} />} />
-        <Route
-          path="/clients"
-          element={
-            <ClientsPage
-              onClientsChanged={() => setClientsVersion((version) => version + 1)}
-              user={user}
-            />
-          }
-        />
-        <Route
-          path="/clients/import"
-          element={
-            <ImportClientsPage
-              onClientsChanged={() => setClientsVersion((version) => version + 1)}
-              user={user}
-            />
-          }
-        />
-        <Route path="/conversions" element={<ConversionsPage />} />
-        <Route path="/conversions/new" element={<NewConversionPage />} />
-        <Route path="/conversions/preview" element={<ValidationPreviewPage />} />
-        <Route path="/conversions/result/:id" element={<ConversionResultPage />} />
-        <Route path="/billing" element={<BillingPage />} />
-        <Route path="/billing/history" element={<BillingHistoryPage />} />
-        <Route path="/settings" element={<SettingsPage user={user} />} />
-        <Route path="/obligations" element={<ObligationsPage />} />
-      </Route>
-      <Route path="/login" element={<Navigate replace to="/dashboard" />} />
-      <Route path="*" element={<Navigate replace to="/dashboard" />} />
-    </Routes>
+    <Suspense fallback={<LoginSkeleton />}>
+      <Routes>
+        <Route element={<AppLayout onLogout={() => void handleLogout()} user={user} />}>
+          <Route index element={<Navigate replace to="/dashboard" />} />
+          <Route path="/dashboard" element={<DashboardPage clientsVersion={clientsVersion} />} />
+          <Route
+            path="/clients"
+            element={
+              <ClientsPage
+                onClientsChanged={() => setClientsVersion((version) => version + 1)}
+                user={user}
+              />
+            }
+          />
+          <Route
+            path="/clients/import"
+            element={
+              <ImportClientsPage
+                onClientsChanged={() => setClientsVersion((version) => version + 1)}
+                user={user}
+              />
+            }
+          />
+          <Route path="/conversions" element={<ConversionsPage />} />
+          <Route path="/conversions/new" element={<NewConversionPage />} />
+          <Route path="/conversions/preview" element={<ValidationPreviewPage />} />
+          <Route path="/conversions/result/:id" element={<ConversionResultPage />} />
+          <Route path="/billing" element={<BillingPage />} />
+          <Route path="/billing/history" element={<BillingHistoryPage />} />
+          <Route path="/settings" element={<SettingsPage user={user} />} />
+          <Route path="/obligations" element={<ObligationsPage />} />
+        </Route>
+        <Route path="/login" element={<Navigate replace to="/dashboard" />} />
+        <Route path="*" element={<Navigate replace to="/dashboard" />} />
+      </Routes>
+    </Suspense>
   );
 }
 

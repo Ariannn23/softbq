@@ -1,10 +1,5 @@
 import { z } from "zod";
 
-export const loginSchema = z.object({
-  username: z.string().trim().min(1, "Ingresa tu usuario"),
-  password: z.string().min(1, "Ingresa tu contrasena"),
-});
-
 export const clientSchema = z.object({
   ruc: z.string().regex(/^\d{11}$/, "El RUC debe tener 11 digitos"),
   businessName: z.string().trim().min(1, "Ingresa la razon social"),
@@ -31,7 +26,6 @@ export const clientSchema = z.object({
   purchasesTotalAccount: z.string().trim(),
 });
 
-export type LoginValues = z.infer<typeof loginSchema>;
 export type ClientValues = z.infer<typeof clientSchema>;
 
 export type SessionUser = {

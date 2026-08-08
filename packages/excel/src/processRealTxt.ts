@@ -37,7 +37,8 @@ async function main() {
             defaultIgvPercent: 18,
             defaultPaymentMethod: "008",
             defaultGoodsServicesClassification: "1",
-            purchasesAccount: "601111"
+            purchasesBaseAccount: "601111",
+            purchasesTotalAccount: "421211"
           },
           purchases
         });
@@ -62,7 +63,8 @@ async function main() {
             defaultCondition: "CON",
             defaultIgvPercent: 18,
             defaultPaymentMethod: "008",
-            salesAccount: "701111",
+            salesBaseAccount: "701111",
+            salesTotalAccount: "121211",
           },
           sales
         });

@@ -1,12 +1,13 @@
 import { eq } from "drizzle-orm";
 
+import type { UserRole } from "@softbq/core";
 import { db, users } from "@softbq/db";
 
 export type AuthUserRecord = {
   id: number;
   username: string;
   passwordHash: string;
-  role: "admin" | "principal_accountant";
+  role: UserRole;
   active: boolean;
 };
 

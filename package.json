@@ -1,7 +1,7 @@
 {
   "name": "softbq",
   "private": true,
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "SOFTBQ - Convertidor local de SIRE SUNAT a formatos Contasis SQL.",
   "author": "Grupo BQ",
   "main": "electron/main.cjs",
@@ -18,7 +18,8 @@
     "db:seed": "npm run db:seed --workspace @softbq/db",
     "start:electron": "electron .",
     "build:exe": "npm run build && electron-builder",
-    "publish:exe": "npm run build && electron-builder --publish always"
+    "publish:exe": "npm run build && electron-builder --publish always",
+    "publish:release": "powershell -ExecutionPolicy Bypass -File scripts/publish-release.ps1"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
@@ -43,6 +44,7 @@
   "build": {
     "appId": "com.grupobq.softbq",
     "productName": "SoftBQ",
+    "artifactName": "SoftBQ-Setup-${version}.${ext}",
     "directories": {
       "output": "C:/Users/arian/softbq-build"
     },

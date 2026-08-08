@@ -1,4 +1,5 @@
-import type { LoginValues, SessionUser } from "../../shared/types";
+import type { LoginValues } from "../types";
+import type { SessionUser } from "../../shared/types";
 
 export async function fetchSession(): Promise<SessionUser | null> {
   const response = await fetch("/api/auth/me", { credentials: "include" });

@@ -42,8 +42,11 @@ export interface ClientConfig {
   hasItan: boolean;
   hasDaot: boolean;
   hasPdt710: boolean;
-  salesAccount: string;
-  purchasesAccount: string;
+  hasFinalBeneficiary: boolean;
+  salesBaseAccount: string;
+  salesTotalAccount: string;
+  purchasesBaseAccount: string;
+  purchasesTotalAccount: string;
 }
 
 export interface User {

@@ -1,15 +1,13 @@
-import { PlusCircle, Upload, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 import type { SessionUser, Client } from "../../shared/types";
-import { SearchBox } from "../../shared/ui";
 import { ConfirmModal } from "../../shared/ConfirmModal";
 import { ClientForm } from "../components/ClientForm";
-import { ClientsTable } from "../components/ClientsTable";
 import { ClientDetailsModal } from "../components/ClientDetailsModal";
+import { ClientsListPanel } from "../components/ClientsListPanel";
+import { ClientsPageHeader } from "../components/ClientsPageHeader";
 import { useClientsPage } from "../hooks/useClientsPage";
-import { Pagination } from "../../shared/Pagination";
-import { useState } from "react";
 
 export function ClientsPage({
   onClientsChanged,
@@ -24,52 +22,23 @@ export function ClientsPage({
 
   return (
     <div className="mx-auto max-w-[1540px] px-7 py-8">
-      <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Clientes</h1>
-          <p className="mt-2 text-[#26466f]">Administra la base de clientes del estudio.</p>
-        </div>
-        <div className="flex gap-4">
-          <a href="/formato_clientes.xlsx" download className="flex h-[42.4px] items-center gap-3 rounded-md border border-[#c9dbef] bg-white px-6 font-semibold text-[#056ba6] transition-colors hover:bg-slate-50">
-            <Download size={20} />
-            Descargar formato
-          </a>
-          {user.role !== "assistant" && (
-            <>
-              <button className="flex h-[42.4px] items-center gap-3 rounded-md border border-[#c9dbef] bg-white px-6 font-semibold text-[#056ba6] hover:bg-slate-50 transition-colors" onClick={() => navigate("/clients/import")} type="button">
-                <Upload size={20} />
-                Importar clientes
-              </button>
-              <button className="flex h-[42.4px] items-center gap-3 rounded-md bg-[#056ba6] px-6 font-semibold text-white hover:bg-[#045585] transition-colors" onClick={state.startCreate} type="button">
-                <PlusCircle size={20} />
-                Crear cliente
-              </button>
-            </>
-          )}
-        </div>
-      </div>
+      <ClientsPageHeader user={user} onImport={() => navigate("/clients/import")} onCreate={state.startCreate} />
 
-      <section className="mt-7 overflow-hidden rounded-lg border border-[#d8e8f6] bg-white shadow-sm">
-        <div className="border-b border-[#d8e8f6] p-5">
-          <SearchBox onChange={state.setSearch} placeholder="Buscar por RUC, razon social o nombre corto..." value={state.search} />
-        </div>
-        <ClientsTable
-          clients={state.paginatedClients}
-          loading={state.loading}
-          onEdit={state.startEdit}
-          onToggleClient={(client, action) => void state.startToggleClient(client, action)}
-          onView={(client) => setViewingClient(client)}
-          user={user}
-        />
-        <Pagination
-          currentPage={state.currentPage}
-          totalPages={state.totalPages}
-          totalItems={state.clients.length}
-          pageSize={10}
-          onPageChange={state.setCurrentPage}
-          itemName="clientes"
-        />
-      </section>
+      <ClientsListPanel
+        clients={state.paginatedClients}
+        currentPage={state.currentPage}
+        loading={state.loading}
+        pageSize={10}
+        search={state.search}
+        totalItems={state.clients.length}
+        totalPages={state.totalPages}
+        user={user}
+        onEdit={state.startEdit}
+        onPageChange={state.setCurrentPage}
+        onSearchChange={state.setSearch}
+        onToggleClient={(client, action) => void state.startToggleClient(client, action)}
+        onView={setViewingClient}
+      />
 
       {state.showForm ? (
         <ClientForm
